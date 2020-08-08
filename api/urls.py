@@ -2,6 +2,7 @@ from rest_framework import routers
 from django.urls import path
 from django.conf.urls import include, re_path
 from store.views import store
+from api.views.stores import StoreViewSet
 
 # drf_yasg code starts here
 from rest_framework import permissions
@@ -26,10 +27,10 @@ schema_view = get_schema_view(
 
 # ViewSet
 router = routers.DefaultRouter()
-router.register('', )
+router.register('stores', StoreViewSet)
 
-router = routers.DefaultRouter()
-router.register('', )
+# router = routers.DefaultRouter()
+# router.register('', )
 
 
 urlpatterns = [

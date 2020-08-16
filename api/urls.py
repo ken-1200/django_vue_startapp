@@ -5,6 +5,7 @@ from store.views import store
 from api.views.stores import StoreViewSet
 from api.views.items import ItemViewSet
 from api.views.users import UserViewSet
+from api.views.payments import PaymentViewSet
 
 # drf_yasg code starts here
 from rest_framework import permissions
@@ -32,6 +33,7 @@ router = routers.DefaultRouter()
 router.register('stores', StoreViewSet)
 router.register('items', ItemViewSet)
 router.register('users', UserViewSet)
+router.register('payments', PaymentViewSet)
 
 
 

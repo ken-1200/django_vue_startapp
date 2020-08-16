@@ -1,10 +1,6 @@
 from django.db import models
 
-
 # Create your models here.
-
-# 他のカラムを指定する方法
-# from user.models.users import User と user_email = models.ForeignKey(User, db_column='user_email(自分のカラム)', to_field='user_email(リレーション先のカラム)', on_delete=models.PROTECT)
 
 # paymentクラス
 class Payment(models.Model):

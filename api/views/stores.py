@@ -25,5 +25,5 @@ class StoreViewSet(viewsets.ModelViewSet):
     store_obj.store_email = store_obj.store_email
     store_obj.store_password = ''
     store_obj.save()
-    content = 'store_name: {store_obj.store_name}' 'store_email: {store_obj.store_email}' 'store_password: {store_obj.store_password}'.format(store_obj=store_obj)
-    return Response(content)
+    content = {'store_name': '{store_obj.store_name}'.format(store_obj=store_obj), 'store_email': '{store_obj.store_email}'.format(store_obj=store_obj), 'store_password': '{store_obj.store_password}'.format(store_obj=store_obj)}
+    return Response({'message': 'Success', 'data': content, 'status': 204})

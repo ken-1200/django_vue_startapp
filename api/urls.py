@@ -1,7 +1,6 @@
 from rest_framework import routers
 from django.urls import path
 from django.conf.urls import include, re_path
-from store.views import store
 from api.views.stores import StoreViewSet
 from api.views.items import ItemViewSet
 from api.views.users import UserViewSet

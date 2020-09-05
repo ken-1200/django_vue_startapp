@@ -16,6 +16,8 @@ class Item(models.Model):
   item_price = models.IntegerField(null=False, blank=False, default=0)
   item_total = models.PositiveIntegerField(null=False, blank=False)
   created_at = models.DateTimeField(auto_now_add=True, null=True)
+  updated_at = models.DateTimeField(auto_now=True)
+  deleted_at = models.DateTimeField(null=True)
 
   def __str__(self):
     return self.item_name

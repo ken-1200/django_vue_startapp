@@ -4,11 +4,10 @@ from item.models.items import Item
 class ItemSerializer(serializers.ModelSerializer):
   class Meta:
     model = Item
-    fields = ['id', 'store_id', 'item_name', 'item_img', 'item_detail', 'item_price', 'item_total', 'created_at']
+    fields = ['id', 'store_id', 'item_name', 'item_img', 'item_detail', 'item_price', 'item_total']
 
 # create
   def create(self, validated_data):
-    print('New Item Created')
     item = Item(
       store_id=validated_data['store_id'],
       item_name=validated_data['item_name'],
@@ -21,7 +20,6 @@ class ItemSerializer(serializers.ModelSerializer):
 
 # update-partial_update
   def update(self, instance, validated_data):
-    print('update - partial_update')
     instance.item_name = validated_data.get('item_name', instance.item_name)
     instance.item_img = validated_data.get('item_img', instance.item_img)
     instance.item_detail = validated_data.get('item_detail', instance.item_detail)

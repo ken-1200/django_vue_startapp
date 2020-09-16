@@ -5,4 +5,4 @@ from payment.models.roles import Role
 class RoleSerializer(serializers.ModelSerializer):
   class Meta:
     model = Role
-    fields = ['item_id', 'item_quantity']
+    fields = ['id', 'item_id', 'item_quantity']

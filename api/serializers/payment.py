@@ -13,7 +13,6 @@ class PaymentSerializer(serializers.ModelSerializer):
     fields = ['role', 'pay_totalprice', 'user_email']
 
   def update(self, instance, validated_data):
-    # Update existing instance
     instance.id = validated_data.get('id', instance.id)
     instance.pay_totalprice = validated_data.get('pay_totalprice', instance.pay_totalprice)
     instance.user_email = validated_data.get('user_email', instance.user_email)
@@ -21,7 +20,7 @@ class PaymentSerializer(serializers.ModelSerializer):
     return instance
 
   def create(self, validated_data):
-    # Create new instance
+  # Paymentを作成してからRoleを作成する
     items = validated_data.pop('role')
     payment_obj = Payment.objects.create(**validated_data)
     validated_data['role'] = items

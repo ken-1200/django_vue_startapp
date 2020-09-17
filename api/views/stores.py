@@ -6,6 +6,8 @@ from api.serializers.store import StoreSerializer
 from store.models.stores import Store
 from django.utils import timezone
 from rest_framework.exceptions import APIException
+from rest_framework import status
+from rest_framework.exceptions import ValidationError
 
 # Create your views here.
 
@@ -15,6 +17,11 @@ class NotFound(APIException):
   default_detail = "見つかりませんでした。"
   default_code = "HTTP_404_NOT_FOUND"
 
+class BadRequest(APIException):
+  status_code = 400
+  default_detail = "不正なアクセスがありました。"
+  default_code = "Bad_Request"
+
 # StoreViewSetの作成
 class StoreViewSet(viewsets.ModelViewSet):
   """
@@ -22,6 +29,27 @@ class StoreViewSet(viewsets.ModelViewSet):
   """
   queryset = Store.objects.all()
   serializer_class = StoreSerializer
+
+# create
+  @action(detail=False, methods=['post'])
+  def create_store(self, request):
+    serializer = StoreSerializer(data=request.data)
+    # store作成時、同じemailの場合はエラーを返す--レコードの存在をチェックする
+    try:
+      if Store.objects.filter(store_email=request.data['store_email']).exists():
+        return Response({'store': '既に存在するEmailです。'}, status=status.HTTP_400_BAD_REQUEST)
+    except Exception as err:
+      print(err)
+      raise ValidationError({
+        'Bad_Request': [
+          BadRequest().status_code,
+          BadRequest().default_detail
+        ]
+      })
+    if serializer.is_valid(raise_exception=True):
+      serializer.save()
+      return Response({'store': serializer.data}, status=status.HTTP_201_CREATED)
+    return Response({'store': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
 # delete_endpoint
   @action(detail=True, methods=['delete'])

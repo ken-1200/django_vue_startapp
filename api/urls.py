@@ -1,10 +1,10 @@
 from rest_framework import routers
 from django.urls import path
 from django.conf.urls import include, re_path
-from store.views import store
 from api.views.stores import StoreViewSet
 from api.views.items import ItemViewSet
 from api.views.users import UserViewSet
+from api.views.payments import PaymentList, PaymentViewSet
 
 # drf_yasg code starts here
 from rest_framework import permissions
@@ -32,8 +32,7 @@ router = routers.DefaultRouter()
 router.register('stores', StoreViewSet)
 router.register('items', ItemViewSet)
 router.register('users', UserViewSet)
-
-
+router.register('payments', PaymentViewSet)
 
 urlpatterns = [
   re_path('swagger(?P<format>\.json|\.yaml)$',
@@ -42,5 +41,6 @@ urlpatterns = [
     schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
   path('redoc/', 
     schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
-  path('', include(router.urls))
+  path('', include(router.urls)),
+  path('payments_post/', PaymentList.as_view())
 ]

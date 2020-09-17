@@ -35,18 +35,18 @@ class StoreViewSet(viewsets.ModelViewSet):
   def create_store(self, request):
     serializer = StoreSerializer(data=request.data)
     # store作成時、同じemailの場合はエラーを返す--レコードの存在をチェックする
-    try:
-      if Store.objects.filter(store_email=request.data['store_email']).exists():
-        return Response({'store': '既に存在するEmailです。'}, status=status.HTTP_400_BAD_REQUEST)
-    except Exception as err:
-      print(err)
-      raise ValidationError({
-        'Bad_Request': [
-          BadRequest().status_code,
-          BadRequest().default_detail
-        ]
-      })
     if serializer.is_valid(raise_exception=True):
+      try:
+        if Store.objects.filter(store_email=request.data['store_email']).exists():
+          return Response({'store': '既に存在するEmailです。'}, status=status.HTTP_400_BAD_REQUEST)
+      except Exception as err:
+        print(err)
+        raise ValidationError({
+          'Bad_Request': [
+            BadRequest().status_code,
+            BadRequest().default_detail
+          ]
+        })
       serializer.save()
       return Response({'store': serializer.data}, status=status.HTTP_201_CREATED)
     return Response({'store': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)

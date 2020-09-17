@@ -75,21 +75,21 @@ class PaymentList(APIView):
   def post(self, request, format=None):
     serializer = PaymentSerializer(data=request.data)
     # 総数から購入数を引く処理
-    try:
-      for role in request.data['role']:
-        item = Item.objects.get(id=role['item_id'])
-        item.item_total -= role['item_quantity']
-        item.save()
-    except Exception as err:
-      # システム終了以外の全ての組み込み例外
-      print(err)
-      raise ValidationError({
-        'Bad_Request': [
-          BadRequest().status_code,
-          BadRequest().default_detail
-        ]
-      })
     if serializer.is_valid(raise_exception=True):
+      try:
+        for role in request.data['role']:
+          item = Item.objects.get(id=role['item_id'])
+          item.item_total -= role['item_quantity']
+          item.save()
+      except Exception as err:
+        # システム終了以外の全ての組み込み例外
+        print(err)
+        raise ValidationError({
+          'Bad_Request': [
+            BadRequest().status_code,
+            BadRequest().default_detail
+          ]
+        })
       serializer.save()
       return Response({'payments': serializer.data}, status=status.HTTP_201_CREATED)
     return Response({ 'payments': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)

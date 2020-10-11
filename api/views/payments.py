@@ -15,6 +15,7 @@ from rest_framework.exceptions import APIException
 from django.core import serializers
 from django.http import HttpResponse
 
+# swagger対応
 from drf_yasg.utils import swagger_auto_schema
 
 # APIException

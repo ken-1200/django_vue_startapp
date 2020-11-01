@@ -33,6 +33,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'drf_yasg',
     'corsheaders',
+    'rest_framework.authtoken',
+    'customtoken.apps.CustomtokenConfig',
 ]
 
 MIDDLEWARE = [
@@ -129,14 +131,22 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # url指定
 MEDIA_URL = '/media/'
 
-# Parser classes to help swagger, default ll be JSONParser only.
+#Django Rest frameworkの設定
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS':
-    'rest_framework.pagination.PageNumberPagination',
+        'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 100,
     'DEFAULT_SCHEMA_CLASS':
-    'rest_framework.schemas.coreapi.AutoSchema'
+        'rest_framework.schemas.coreapi.AutoSchema',
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+    ],
+    'DEFAULT_PERMISSION_CLASSES': ('rest_framework.permissions.IsAuthenticated',),
 }
 
 # CORS
 CORS_ORIGIN_ALLOW_ALL = True
+
+# Application definition
+AUTH_USER_MODEL = 'user.User'

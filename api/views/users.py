@@ -49,6 +49,9 @@ class UserUpdateView(generics.UpdateAPIView):
 
 # LoginAPIView-User
 class UserLogin(APIView):
+  # パーミッション解除
+  permission_classes = ()
+
   @swagger_auto_schema(request_body=UserLoginSerializer, operation_description="description")
   def post(self, request, format=None):
     try:
@@ -94,6 +97,8 @@ class NotFound(APIException):
 
 # UserViewSet
 class UserViewSet(viewsets.ModelViewSet):
+  # パーミッション解除
+  permission_classes = ()
   queryset = User.objects.all()
   serializer_class = UserSerializer
 

@@ -56,6 +56,9 @@ class StoreUserUpdateView(generics.UpdateAPIView):
 
 # LoginAPIView-Store
 class StoreLogin(APIView):
+  # パーミッション解除
+  permission_classes = ()
+
   @swagger_auto_schema(request_body=StoreLoginSerializer(), operation_description="description")
   def post(self, request, format=None):
     try:
@@ -99,6 +102,8 @@ class StoreViewSet(viewsets.ModelViewSet):
   """
   API endpoint that allows stores to be viewed or edited.
   """
+  # パーミッション解除
+  permission_classes = ()
   queryset = Store.objects.all()
   serializer_class = StoreSerializer
 

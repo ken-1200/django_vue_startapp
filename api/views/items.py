@@ -22,6 +22,8 @@ class ItemViewSet(viewsets.ModelViewSet):
   """
   API endpoint that allows items to be viewed or edited.
   """
+  # パーミッション解除
+  permission_classes = ()
   queryset = Item.objects.all()
   serializer_class = ItemSerializer
 

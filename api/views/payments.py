@@ -31,6 +31,8 @@ class NotFound(APIException):
 
 # ModelViewSet
 class PaymentViewSet(viewsets.ModelViewSet):
+  # パーミッション解除
+  permission_classes = ()
   queryset = Payment.objects.all()
   serializer_class = PaymentSerializer
 
@@ -72,6 +74,9 @@ class PaymentList(APIView):
   """
   List all payments, or create a new payments.
   """
+  # パーミッション解除
+  permission_classes = ()
+
   @swagger_auto_schema(request_body=PaymentSerializer(), operation_description="description")
   def post(self, request, format=None):
     serializer = PaymentSerializer(data=request.data)

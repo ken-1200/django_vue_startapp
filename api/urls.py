@@ -1,10 +1,12 @@
 from rest_framework import routers
 from django.urls import path
 from django.conf.urls import include, re_path
-from api.views.stores import StoreViewSet
+from api.views.stores import StoreViewSet, StoreLogin, LoginStoreUserGetView, StoreUserUpdateView
 from api.views.items import ItemViewSet
-from api.views.users import UserViewSet
+from api.views.users import UserViewSet, UserLogin, LoginUserGetView, UserUpdateView
 from api.views.payments import PaymentList, PaymentViewSet
+from rest_framework.authtoken import views
+
 
 # drf_yasg code starts here
 from rest_framework import permissions
@@ -42,5 +44,11 @@ urlpatterns = [
   path('redoc/', 
     schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
   path('', include(router.urls)),
-  path('payments_post/', PaymentList.as_view())
+  path('payments_post/', PaymentList.as_view()),
+  path('store_login/', StoreLogin.as_view()),
+  path('user_login/', UserLogin.as_view()),
+  path('get_store_user/', LoginStoreUserGetView.as_view()),
+  path('get_user/', LoginUserGetView.as_view()),
+  path('store_user_update/', StoreUserUpdateView.as_view()),
+  path('user_update/', UserUpdateView.as_view()),
 ]

@@ -2,7 +2,7 @@ from rest_framework import routers
 from django.urls import path
 from django.conf.urls import include, re_path
 from api.views.stores import StoreViewSet, StoreLogin, LoginStoreUserGetView, StoreUserUpdateView
-from api.views.items import ItemViewSet
+from api.views.items import ItemViewSet, ItemList, ItemDetail
 from api.views.users import UserViewSet, UserLogin, LoginUserGetView, UserUpdateView
 from api.views.payments import PaymentList, PaymentViewSet
 from rest_framework.authtoken import views
@@ -51,4 +51,6 @@ urlpatterns = [
   path('get_user/', LoginUserGetView.as_view()),
   path('store_user_update/', StoreUserUpdateView.as_view()),
   path('user_update/', UserUpdateView.as_view()),
+  path('item_list/', ItemList.as_view()),
+  path('item_detail/<int:pk>/', ItemDetail.as_view()),
 ]

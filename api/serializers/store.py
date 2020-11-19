@@ -2,6 +2,7 @@ from rest_framework import serializers
 from store.models.stores import Store, CustomStoreManager
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth import update_session_auth_hash
+from django.contrib.auth.hashers import check_password
 
 class StoreSerializer(serializers.ModelSerializer):
   store_password = serializers.CharField(write_only=True, required=False)
@@ -11,15 +12,21 @@ class StoreSerializer(serializers.ModelSerializer):
 
 # パスワード更新
   def update(self, instance, validated_data):
-    if 'store_password' in validated_data:
-      # 更新の場合 make_passwordを使ってpasswordをハッシュ化
-      password = validated_data.get('store_password', instance.store_password)
-      instance.store_password = make_password(password)
-      print('更新しました。')
-    else:
-      instance.super().update(instance, validated_data)
-      print('更新しませんでした。')
+    exist_password = instance.store_password
+    valid_password = validated_data.get('store_password', instance.store_password)
+
+    # パスワードチェック
+    if check_password(valid_password, exist_password):
+      # 同じパスワードの時 既存のデータを返す
+      print('既存と同じパスワードです。')
+      instance.save()
+      return instance
+
+    # 更新の場合 make_passwordを使ってpasswordをハッシュ化
+    password = validated_data.get('store_password', instance.store_password)
+    instance.store_password = make_password(password)
     instance.save()
+    print('パスワード更新しました。')
     return instance
 
 # StoreModelで定義したユーザー作成のメソッドを呼ぶ

@@ -15,6 +15,10 @@ from django.http.response import JsonResponse
 from django.contrib.auth.hashers import check_password
 from rest_framework import authentication, permissions, generics
 from django.http import HttpResponse, Http404
+from item.models.items import Item
+from api.serializers.item import ItemSerializer
+from api.permission import CustomItemPermission, CustomStorePermission
+from api.authentication import CustomAuthentication
 
 # Pythonの標準ライブラリのjsonモジュールを使うと
 # JSON形式のファイルや文字列をパース（解析）して辞書dictなどのオブジェクトとして読み込める
@@ -25,34 +29,40 @@ from drf_yasg.utils import swagger_auto_schema
 
 # ログインユーザー情報取得
 class LoginStoreUserGetView(generics.GenericAPIView):
-  # ログインしている状態で自分自身の情報を取得する
-  permission_classes = (permissions.IsAuthenticated,)
+  """
+  ログインしている状態で自分自身の情報を取得する
+  """
+  authentication_classes = [CustomAuthentication,]
+  permission_classes = (CustomStorePermission,)
   queryset = Store.objects.all()
   serializer_class = StoreSerializer
 
   def get(self, request, format=None):
-    return Response(data={
-      'store_name': request.store_name,
-      'store_email': request.store_email,
-    }, status=status.HTTP_200_OK)
+    content = {
+      'store_name': request.user.store_name,
+      'store_email': request.user.store_email,
+    }
+    return Response(data=content, status=status.HTTP_200_OK)
 
 # アップデート専用(ログインしているユーザー)
 class StoreUserUpdateView(generics.UpdateAPIView):
-  permissions_classes = (permissions.IsAuthenticated,)
+  """
+  ログインしている状態で自分自身の情報をupdateする
+  """
+  authentication_classes = [CustomAuthentication,]
+  permissions_classes = (CustomStorePermission,)
   queryset = Store.objects.all()
   serializer_class = StoreSerializer
   # 検索キーの指定(デフォルトはid)
   lookup_fields = 'store_email'
 
   def get_object(self):
+    # まずここが読み込まれる 認証、権限のえられたストアユーザーが入ってきて、その情報をinstanceとして返却
     try:
       instance = self.queryset.get(store_email=self.request.user)
-      print(instance)
       return instance
     except Store.DoesNotExist:
       raise Http404
-
-
 
 # LoginAPIView-Store
 class StoreLogin(APIView):

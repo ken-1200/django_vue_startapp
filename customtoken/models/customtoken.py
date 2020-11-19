@@ -4,6 +4,9 @@ from django.utils import timezone
 # このモジュールは、セキュアハッシュやメッセージダイジェスト用のさまざまなアルゴリズムを実装したもの
 import hashlib
 
+# 経過時間値
+from datetime import timedelta
+
 # Storeモデル専用のカスタムトークン
 class CustomToken(models.Model):
   store_user = models.ForeignKey(Store, on_delete=models.CASCADE)
@@ -13,6 +16,9 @@ class CustomToken(models.Model):
   def __str__(self):
     return self.store_user
 
+  """
+  トークン生成用のメソッド
+  """
 # tokencreate関数（静的メソッド）
   @staticmethod
   def create(store: Store):
@@ -37,3 +43,37 @@ class CustomToken(models.Model):
       created=tz
     )
     return token
+
+  """
+  認証用のメソッドを用意
+  """
+# トークンを取得するメソッド
+  @staticmethod
+  def get(token_str: str):
+    # 引数のトークンの文字列が存在するかチェックする
+    if CustomToken.objects.filter(key=token_str[7:]).exists():
+      # 存在した場合
+      return CustomToken.objects.get(key=token_str[7:])
+    else:
+      # 存在しない場合
+      return None
+
+# 有効時間30分
+  def valid_time_token(self):
+    # 経過時間30分 < 今の時間 - トークン生成時の時間
+    validtime = timedelta(minutes=30)
+    if (validtime < timezone.now() - self.created):
+      # 30分以上の場合
+      print('トークンで有効期限切れです。')
+      return False
+    else:
+      # 30分以下の場合
+      print('トークンが有効期限内です。')
+      return True
+
+# トークン生成時間を最新に更新する
+  def update_token(self):
+    # 現在日時で更新する
+    self.created = timezone.now()
+    print(self.created)
+    self.save()

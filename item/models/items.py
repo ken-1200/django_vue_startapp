@@ -9,7 +9,8 @@ def load_path(instance, filename):
 
 # itemクラス
 class Item(models.Model):
-  store_id = models.ForeignKey(Store, on_delete=models.CASCADE)
+  # それぞれの商品を誰が販売しているのかを保持する
+  store_owner = models.ForeignKey(Store, related_name='item', on_delete=models.CASCADE)
   item_name = models.CharField(max_length=30, null=False, blank=False)
   item_img = models.ImageField(null=True, blank=True, upload_to=load_path)
   item_detail = models.TextField(null=True, blank=True)

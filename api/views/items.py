@@ -24,7 +24,7 @@ class ItemList(generics.ListCreateAPIView):
   queryset = Item.objects.all()
   serializer_class = ItemSerializer
   authentication_classes = [CustomAuthentication,]
-  # 認証されたユーザのリクエストは読み書きが可能になり、認証されていないリクエストは読み取りのみ可能になります。
+  # 認証されたユーザのリクエストは読み書きが可能になり、認証されていないリクエストは読み取りのみ可能
   permission_classes = [CustomItemPermission,]
 
   # 新しいオブジェクトインスタンスを保存するときに呼び出される
@@ -33,7 +33,7 @@ class ItemList(generics.ListCreateAPIView):
     serializer.save(store_owner=self.request.user)
 
 # 商品詳細クラス
-# 単一のモデルインスタンスを表すための読み取り-書き込み-削除エンドポイントに使用されます。
+# 単一のモデルインスタンスを表すための読み取り-書き込み-削除エンドポイントに使用
 class ItemDetail(generics.RetrieveUpdateDestroyAPIView):
   """
   アイテム GET(pk指定), PUT, PATCH, DELETE(レコード削除)

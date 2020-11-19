@@ -17,3 +17,9 @@ class CustomItemPermission(permissions.BasePermission):
     # 権限があるユーザーのみ編集可
     print('権限があるユーザーが編集しました。')
     return obj.store_owner == request.user
+
+# store権限
+class CustomStorePermission(permissions.BasePermission):
+  def has_permission(self, request, view):
+    print('ストアユーザー情報返却しました。')
+    return super().has_permission(request, view)

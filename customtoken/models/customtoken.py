@@ -11,6 +11,8 @@ from datetime import timedelta
 class CustomToken(models.Model):
   store_user = models.ForeignKey(Store, on_delete=models.CASCADE)
   key = models.CharField(max_length=64, null=False)
+  refresh_key = models.CharField(max_length=64, null=False)
+  expires_in = models.IntegerField(null=False, blank=False, default=3600)
   created = models.DateTimeField(auto_now_add=True, null=True)
 
   def __str__(self):

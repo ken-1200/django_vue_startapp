@@ -97,7 +97,9 @@ class StoreLogin(APIView):
     login_data = {
       'store_email': request_email,
       'store_password': request_password,
-      'token': token.key
+      'token': token.key,
+      'refresh_token': token.refresh_key,
+      'expires_in': token.expires_in,
     }
     return Response({'message': 'Success', 'data': login_data, 'status': 200})
 

@@ -42,6 +42,7 @@ class CustomToken(models.Model):
     token = CustomToken.objects.create(
       store_user_id=store.id,
       key=hashkey,
+      refresh_key=hashkey,
       created=tz
     )
     return token

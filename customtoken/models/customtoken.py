@@ -27,9 +27,9 @@ class CustomToken(models.Model):
     # ユーザーが保持しているトークンを取得
     if CustomToken.objects.filter(store_user_id=store.id).exists():
       # tokenがある場合は削除
-      print('削除します')
+      print('削除します。')
       CustomToken.objects.get(store_user_id=store.id).delete()
-      print('削除しました')
+      print('削除しました。')
     
     # token生成（email, password, timezone）
     tz = timezone.now()
@@ -61,16 +61,16 @@ class CustomToken(models.Model):
       # 存在しない場合
       return None
 
-# 有効時間30分
+# 有効時間60分
   def valid_time_token(self):
-    # 経過時間30分 < 今の時間 - トークン生成時の時間
-    validtime = timedelta(minutes=30)
+    # 経過時間60分 < 今の時間 - トークン生成時の時間
+    validtime = timedelta(minutes=60)
     if (validtime < timezone.now() - self.created):
-      # 30分以上の場合
+      # 60分以上の場合
       print('トークンで有効期限切れです。')
       return False
     else:
-      # 30分以下の場合
+      # 60分以下の場合
       print('トークンが有効期限内です。')
       return True
 
@@ -78,5 +78,5 @@ class CustomToken(models.Model):
   def update_token(self):
     # 現在日時で更新する
     self.created = timezone.now()
-    print(self.created)
+    print('アクセストークンの生成時間を最新に更新しました。')
     self.save()

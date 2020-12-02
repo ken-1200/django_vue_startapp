@@ -19,6 +19,7 @@ from item.models.items import Item
 from api.serializers.item import ItemSerializer
 from api.permission import CustomItemPermission, CustomStorePermission
 from api.authentication import CustomAuthentication
+from api.serializers.store_refresh_token import StoreRefreshTokenSerializer
 
 # Pythonの標準ライブラリのjsonモジュールを使うと
 # JSON形式のファイルや文字列をパース（解析）して辞書dictなどのオブジェクトとして読み込める
@@ -64,6 +65,34 @@ class StoreUserUpdateView(generics.UpdateAPIView):
     except Store.DoesNotExist:
       raise Http404
 
+# refreshToken
+class StoreRefreshToken(APIView):
+  @swagger_auto_schema(request_body=StoreRefreshTokenSerializer(), operation_description="description")
+  def post(self, request, format=None):
+    try:
+      # リクエストデータ読み込み
+      refresh_key = request.data.get('refresh_key')
+    except:
+      # Jsonの読み込み失敗
+      return JsonResponse({'message': '読み込みに失敗しました。'}, status=400)
+
+    # リフレッシュトークンの整合性チェック
+    if not CustomToken.objects.filter(refresh_key=refresh_key).exists():
+      # 存在しない場合
+      return JsonResponse({'message': 'リフレッシュトークンが違います。'}, status=403)
+    customtoken = CustomToken.objects.get(refresh_key=refresh_key)
+    # リフレッシュトークンを使ってアクセストークンのアクセス日時を更新する
+    customtoken.update_token()
+
+    response = {
+      'store_user_id': customtoken.store_user_id,
+      'access_token': customtoken.key,
+      'refresh_token': customtoken.refresh_key,
+      'expires_in': customtoken.expires_in,
+    }
+    return Response({'message': 'Success', 'data': response, 'status': 200})
+
+
 # LoginAPIView-Store
 class StoreLogin(APIView):
   # パーミッション解除
@@ -94,10 +123,15 @@ class StoreLogin(APIView):
       return JsonResponse({'message': 'パスワードが違います。'}, status=403)
     # tokenの生成 createメソッドを呼ぶ
     token = CustomToken.create(store)
+
+    print('ログインしました。')
+
+    # レスポンス情報
     login_data = {
+      'store_id': token.store_user_id,
       'store_email': request_email,
       'store_password': request_password,
-      'token': token.key,
+      'access_token': token.key,
       'refresh_token': token.refresh_key,
       'expires_in': token.expires_in,
     }

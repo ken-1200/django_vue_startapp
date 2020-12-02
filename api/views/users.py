@@ -85,7 +85,7 @@ class UserLogin(APIView):
     login_data = {
       'user_email': request_email,
       'user_password': request_password,
-      'token': token.key
+      'access_token': token.key
     }
     return Response({'message': 'Success', 'data': login_data, 'status': 200})
 

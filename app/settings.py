@@ -31,11 +31,15 @@ INSTALLED_APPS = [
     'store.apps.StoreConfig',
     'user.apps.UserConfig',
     'rest_framework',
-    'rest_framework_swagger',
-    'drf_yasg'
+    'drf_yasg',
+    'corsheaders',
+    'rest_framework.authtoken',
+    'customtoken.apps.CustomtokenConfig',
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -128,10 +132,36 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # url指定
 MEDIA_URL = '/media/'
 
-# Parser classes to help swagger, default ll be JSONParser only.
+#Django Rest frameworkの設定
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS':
-    'rest_framework.pagination.PageNumberPagination',
+        'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 100,
-    'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema'
+    'DEFAULT_SCHEMA_CLASS':
+        'rest_framework.schemas.coreapi.AutoSchema',
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+        ],
 }
+
+# CORS
+CORS_ORIGIN_ALLOW_ALL = True
+
+CORS_ORIGIN_WHITELIST = (
+    'http://localhost:8081',
+)
+
+CORS_ALLOW_HEADERS = [
+    'accept',
+    'accept-encoding',
+    'authorization',
+    'content-type',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
+]
+
+# Application definition
+AUTH_USER_MODEL = 'user.User'

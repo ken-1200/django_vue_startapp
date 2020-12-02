@@ -1,28 +1,49 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <!-- 認証無しの場合に表示 -->
+    <template v-if="!isAuthenticated">
+      <Header/>
+    </template>
+    <router-view></router-view>
+    <!-- 認証無しの場合に表示 -->
+    <template v-if="!isAuthenticated">
+      <Footer/>
+    </template>
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import Header from './components/pages/Header.vue'
+import Footer from './components/pages/Footer.vue'
 
 export default {
   name: 'App',
   components: {
-    HelloWorld
-  }
+    Header,
+    Footer, 
+  },
+  computed: {
+    isAuthenticated() {
+      // access_tokenがある場合
+      return this.$store.getters.access_token != null; 
+    }
+  },
 }
 </script>
 
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+<style lang="scss">
+h3 {
+  margin: 40px 0 0;
+}
+ul {
+  list-style-type: none;
+  padding: 0;
+}
+li {
+  display: inline-block;
+  margin: 0 10px;
+}
+a {
+  color: #2f473d;
 }
 </style>

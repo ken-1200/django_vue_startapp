@@ -15,6 +15,7 @@ from rest_framework.exceptions import APIException
 from django.core import serializers
 from django.http import HttpResponse
 
+# swagger対応
 from drf_yasg.utils import swagger_auto_schema
 
 # APIException
@@ -30,6 +31,8 @@ class NotFound(APIException):
 
 # ModelViewSet
 class PaymentViewSet(viewsets.ModelViewSet):
+  # パーミッション解除
+  permission_classes = ()
   queryset = Payment.objects.all()
   serializer_class = PaymentSerializer
 
@@ -71,6 +74,9 @@ class PaymentList(APIView):
   """
   List all payments, or create a new payments.
   """
+  # パーミッション解除
+  permission_classes = ()
+
   @swagger_auto_schema(request_body=PaymentSerializer(), operation_description="description")
   def post(self, request, format=None):
     serializer = PaymentSerializer(data=request.data)

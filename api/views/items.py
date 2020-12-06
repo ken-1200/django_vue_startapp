@@ -68,9 +68,9 @@ class ItemViewSet(viewsets.ModelViewSet):
   @action(detail=False, methods=['get'])
   def get_item_detail(self, request):
     try:
-      # deleted_at=Noneの商品をJsonにシリアル化
-      item = Item.objects.filter(store_owner=request.user.id)
-      item_list = serializers.serialize('json', item)
+      # オーナーの商品をJsonにシリアル化/削除された商品以外を取得
+      items = Item.objects.filter(store_owner=request.user.id, deleted_at=None)
+      item_list = serializers.serialize('json', items)
     except Exception as err:
       # システム終了以外の全ての組み込み例外
       print(err)

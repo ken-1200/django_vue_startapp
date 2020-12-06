@@ -11,14 +11,17 @@
       <div>品数：{{ item.fields.item_total}}個</div>
       <img src=""/>
       <br><br>
-      <button @click.stop="itemEdit(item.pk)">ボタン</button>
+      <button @click.stop="itemEdit(item.pk)">編集</button>
+      <br>
+      <button @click.stop="itemDelete(item.pk)">削除</button>
+      <p>{{accessToken}}</p>
       <br><br>
     </div>
   </div>
 </template>
 
 <script>
-// import axios from 'axios'
+import axios from 'axios'
 
 export default {
   data() {
@@ -35,11 +38,6 @@ export default {
       error: null,
     }
   },
-  methods: {
-    itemEdit(item_id) {
-      this.$router.push(`/item_detail/edit/${item_id}`);
-    }
-  },
   computed: {
     accessToken() {
       return this.$store.getters.access_token;
@@ -49,6 +47,25 @@ export default {
     },
     isErrored() {
       return this.error != null;
+    },
+  },
+  methods: {
+    itemEdit(item_id) {
+      this.$router.push(`/item_detail/edit/${item_id}`);
+    },
+    itemDelete(item_id) {
+      axios.delete(`/items/${item_id}/delete_item/`, {
+        headers: {
+          Authorization: `Bearer ${this.accessToken}`
+        }
+      })
+      .then(response => {
+        console.log(response.data);
+      })
+      .catch(error => {
+        console.log(error);
+        this.error = error;
+      });
     },
   },
   // 非同期
@@ -64,7 +81,7 @@ export default {
       this.error = this.$store.getters.error;
     } else {
       // 商品がない時(0個返却された)
-      this.error = ' 商品が見つかりませんでした。';
+      this.error = ' 商品がありません。';
     }
   },
 }

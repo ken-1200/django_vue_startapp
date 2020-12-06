@@ -16,11 +16,16 @@ from rest_framework.authtoken.models import Token
 from api.serializers.user_login import UserLoginSerializer
 from rest_framework import authentication, permissions, generics
 from django.http import HttpResponse, Http404
+from api.serializers.user_refresh_token import UserRefreshTokenSerializer
 
 import json
 
-# ログインユーザー情報取得
+# ログインユーザー情報取得←ここはまだ修正が必要
 class LoginUserGetView(generics.GenericAPIView):
+  """
+  ログインしている状態で自分自身の情報を取得する
+  """
+  authentication_classes = []
   permissions_classes = (permissions.IsAuthenticated,)
   queryset = User.objects.all()
   serializer_class = UserSerializer
@@ -33,6 +38,10 @@ class LoginUserGetView(generics.GenericAPIView):
 
 # アップデート専用(ログインしているユーザー)
 class UserUpdateView(generics.UpdateAPIView):
+  """
+  ログインしている状態で自分自身の情報をupdateする
+  """
+  authentication_classes = []
   permissions_classes = (permissions.IsAuthenticated,)
   queryset = User.objects.all()
   serializer_class = UserSerializer
@@ -46,6 +55,36 @@ class UserUpdateView(generics.UpdateAPIView):
       return instance
     except User.DoesNotExist:
       raise Http404
+
+
+# refreshToken
+class UserRefreshToken(APIView):
+  @swagger_auto_schema(request_body=UserRefreshTokenSerializer(), operation_description="description")
+  def post(self, request, format=None):
+    try:
+      # リクエストデータ読み込み
+      refresh_key = request.data.get('key')
+    except:
+      # Jsonの読み込み失敗
+      return JsonResponse({'message': '読み込みに失敗しました。'}, status=400)
+
+    # リフレッシュトークンの整合性チェック
+    if not Token.objects.filter(key=refresh_key).exists():
+      # 存在しない場合
+      return JsonResponse({'message': 'リフレッシュトークンが違います。'}, status=403)
+    token = Token.objects.get(key=refresh_key)
+
+    # リフレッシュトークンを使ってアクセストークンのアクセス日時を更新する
+    token.created = timezone.now()
+    print('アクセストークンの生成時間を最新に更新しました。')
+
+    response = {
+      'user_id': token.user_id,
+      'access_token': token.key,
+      'refresh_token': token.key,
+      'expires_in': 3600,
+    }
+    return Response({'message': 'Success', 'data': response, 'status': 200})
 
 # LoginAPIView-User
 class UserLogin(APIView):
@@ -82,10 +121,16 @@ class UserLogin(APIView):
 
     # トークン生成 defaultのcreateメソッド
     token = Token.objects.create(user=user)
+
+    print('ログインしました。')
+
     login_data = {
+      'user_id': token.user_id,
       'user_email': request_email,
       'user_password': request_password,
-      'access_token': token.key
+      'access_token': token.key,
+      'refresh_token': token.key,
+      'expires_in': 3600,
     }
     return Response({'message': 'Success', 'data': login_data, 'status': 200})
 
@@ -107,6 +152,7 @@ class UserViewSet(viewsets.ModelViewSet):
   def create_user(self, request):
     serializer = UserSerializer(data=request.data)
     if serializer.is_valid(raise_exception=True):
+      serializer.save()
       return Response({'user': serializer.data}, status=status.HTTP_201_CREATED)
     return Response({'user': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 

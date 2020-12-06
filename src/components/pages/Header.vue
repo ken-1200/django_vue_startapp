@@ -12,7 +12,7 @@
         <nav class="globalNav__textNav">
           <ul class="globalNav__textNavList">
             <li class="globalNav__textNavListItem">
-              <router-link to="/">仮</router-link>
+              <router-link to="/item_list">商品一覧ページ</router-link>
             </li>
             <li>
               <router-link to="/">ダッシュボード</router-link>

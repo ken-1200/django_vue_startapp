@@ -53,7 +53,7 @@ class NotFound(APIException):
 # ItemViewSetの作成
 class ItemViewSet(viewsets.ModelViewSet):
   """
-  アイテム GET(ストアオーナーに紐づいたアイテム一覧), アイテム GET(削除された商品以外全ての一覧), PATCH(item_idに紐づく商品を更新する), DELETE(レコードは残る)
+  アイテム GET(ストアオーナーに紐づいた除された商品以外一覧), アイテム GET(削除された商品以外全ての一覧), PATCH(item_idに紐づく商品を更新する), DELETE(レコードは残る)
   """
   # パーミッション設定
   # authentication_classesで使用する認証クラスを指定
@@ -137,10 +137,17 @@ class ItemViewSet(viewsets.ModelViewSet):
       })
     return Response({'message': 'Success', 'data': content, 'status': 201})
 
+# 商品一覧 ユーザーストア共に見れる商品一覧
+class AllItemViewSet(viewsets.ModelViewSet):
+  """
+  アイテム GET(削除された商品以外一覧)
+  """
+  queryset = Item.objects.all()
+  serializer_class = ItemSerializer
 
 # 存在する商品(削除されたもの以外全て)List取得
   @action(detail=False, methods=['get'])
-  def get_items_list(self, request):
+  def items_list(self, request):
     try:
       # deleted_at=Noneの商品をJsonにシリアル化
       item = Item.objects.filter(deleted_at=None)

@@ -10,6 +10,9 @@ const ItemRegister = () => import(/* webpackChunkName: "ItemRegister" */"./views
 const StoreItemList = () => import(/* webpackChunkName: "StoreItemList" */"./views/StoreItemList.vue");
 const StoreItemDetail = () => import(/* webpackChunkName: "StoreItemDetail" */"./views/StoreItemDetail.vue");
 
+const UserRegister = () => import(/* webpackChunkName: "UserRegister" */"./views/User/UserRegister.vue");
+const UserLogin = () => import(/* webpackChunkName: "UserLogin" */"./views/User/UserLogin.vue");
+
 
 Vue.use(Router);
 
@@ -58,7 +61,7 @@ export default new Router({
       component: ItemList
     },
     {
-      path: '/item_detail/',
+      path: '/item_detail',
       name: 'item_detail',
       component: StoreItemList,
       beforeEnter(to, from, next) {
@@ -80,21 +83,14 @@ export default new Router({
         }
       }
     },
-    // {
-    //   path: '/store_logout',
-    //   component: Home
-    // },
-    // {
-    //   path: '/store_dashboard',
-    //   component: StoreDashboard,
-    //   beforeEnter(to, from, next) {
-    //     if (store.getters.token) {//tokenがある場合は、そのまま
-    //       next();
-    //     } else {
-    //       next('/store_login')
-    //     }
-    //   }
-    // },
+    {
+      path: '/user_register',
+      component: UserRegister,
+    },
+    {
+      path: '/user_login',
+      component: UserLogin,
+    },
     // {
     //   path: '/item_page',
     //   component: Home

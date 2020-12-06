@@ -2,8 +2,8 @@ from rest_framework import routers
 from django.urls import path
 from django.conf.urls import include, re_path
 from api.views.stores import StoreViewSet, StoreLogin, LoginStoreUserGetView, StoreUserUpdateView, StoreRefreshToken
-from api.views.items import ItemViewSet, ItemList, ItemDetail
-from api.views.users import UserViewSet, UserLogin, LoginUserGetView, UserUpdateView
+from api.views.items import ItemViewSet, ItemList, ItemDetail, AllItemViewSet
+from api.views.users import UserViewSet, UserLogin, LoginUserGetView, UserUpdateView, UserRefreshToken
 from api.views.payments import PaymentList, PaymentViewSet
 from rest_framework.authtoken import views
 
@@ -35,6 +35,7 @@ router.register('stores', StoreViewSet)
 router.register('items', ItemViewSet)
 router.register('users', UserViewSet)
 router.register('payments', PaymentViewSet)
+router.register('all', AllItemViewSet)
 
 urlpatterns = [
   re_path('swagger(?P<format>\.json|\.yaml)$',
@@ -54,4 +55,5 @@ urlpatterns = [
   path('item_list/', ItemList.as_view()),
   path('item_detail/<int:pk>/', ItemDetail.as_view()),
   path('refresh_token/', StoreRefreshToken.as_view()),
+  path('user_refresh_token/', UserRefreshToken.as_view()),
 ]

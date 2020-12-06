@@ -12,12 +12,14 @@ axios.defaults.baseURL = 'http://localhost:8001/api/'
 
 // 再描画時に実行するのでmain.jsに記載
 store.dispatch('autoLogin').then(() => {
+  store.dispatch('userAutoLogin').then(() => {
   // 初期化(インスタンス化)
   new Vue({
     router,
     store,
     render: h => h(App),
   }).$mount('#app');
+  });
 });
 
 

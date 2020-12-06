@@ -5,7 +5,7 @@
       <p><label>名前：<input v-model="store_name" type="text" name="name" size="40" required=true placeholder="name"></label></p>
       <p><label for="email">メールアドレス：<input v-model="store_email" id="email" type="email" name="email" size="30" maxlength="40" placeholder="email" required=true></label></p>
       <p><label for="password">パスワード：<input v-model="store_password" id="password" type="password" name="password" size="10" maxlength="16" placeholder="password" required=true></label></p>
-      <button @click.stop="register">無料でショップを作成する</button>
+      <button @click.stop="register">登録</button>
     </div>
   </div>
 </template>

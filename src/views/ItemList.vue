@@ -1,5 +1,16 @@
 <template>
   <div id="app">
+    <ul>
+      <li>
+        <router-link to="/user_register">ユーザー登録</router-link>
+      <li>
+        <router-link to="/user_login">ユーザーLogin</router-link>
+      </li> 
+      <li>
+        <a @click="logout()">ユーザーログアウト</a>
+      </li>
+    </ul>
+    <hr>
     <!-- 商品一覧 -->
     <h1>商品一覧画面</h1>
     <div v-for="item in items" :key="item.index">
@@ -22,18 +33,14 @@ export default {
       items: [],
     }
   },
-  computed: {
-    accessToken() {
-      return this.$store.getters.access_token;
-    }
+  methods: {
+    logout() {
+      this.$store.dispatch('user_logout');
+    },
   },
   created() {
-    axios.get('/items/get_items_list/', {
-      // 第二引数にヘッダー //ユーザー側の認証もしくは、認証しない状態でのアクセス可能なエンドポイントに変更 
-      headers: {
-        Authorization: `Bearer ${this.accessToken}`
-      }
-    })
+    // ここは、ユーザー側、ストア側両方が見れる商品一覧
+    axios.get('/all/items_list/')
     .then(response => {
       console.log(response.data)
       this.items = response.data

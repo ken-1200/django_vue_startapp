@@ -11,28 +11,28 @@ export default new Vuex.Store({
     store_id: null,
     item_data: [],
     error: null,
-    // ここから
-    item_id: null,
   },
-  getters: { //stateをgettersから操作する
+  getters: {
     access_token: state => state.access_token,
     store_id: state => state.store_id,
     item_data: state => state.item_data,
     error: state => state.error,
-    item_id: state => state.item_id,
   },
-  mutations: { //stateを更新する
+  mutations: {
+    // トークン
     updateAccessToken(state, token) {
       state.access_token = token;
     },
+    // ストアID
     updateStoreId(state, store_id) {
       state.store_id = store_id;
     },
+    // 商品データ
     getItemDetail(state, item_data) {
       state.item_data = item_data;
     }
   },
-  actions: { //非同期処理
+  actions: {
     // 商品取得
     async getItem({ commit }) {
       await axios.get(`/items/get_item_detail/?page=${this.getters.store_id}`, {
@@ -43,9 +43,11 @@ export default new Vuex.Store({
       })
       .then(response => {
         console.log(response.data);
+        // コミット実行で、商品データを格納
         commit('getItemDetail', response.data);
       })
       .catch(error => {
+        // エラー処理
         this.getters.error = `商品が見つかりませんでした。${error}`;
         console.log(error);
       });
@@ -67,29 +69,18 @@ export default new Vuex.Store({
       // 有効期限取得(未来)
       const expiryTimeMs = localStorage.getItem('expiryTimeMs');
 
-      // 12H有効期限取得
-      const ExpiryTimeMs12Hours = localStorage.getItem('ExpiryTimeMs12Hours');
-
       // 有効期限切れ取得 true/false
       const isExpired = now.getTime() >= expiryTimeMs;
-
-      // 有効期限切れ取得12H true/false
-      const is12HoursExpired = now.getTime() >= ExpiryTimeMs12Hours;
 
       // リフレッシュトークン取得
       const refreshToken = localStorage.getItem('refreshToken');
 
-      // 12Hours以上経過した場合、ログアウトさせる
-      if (is12HoursExpired) {
-        console.log('logoutする処理');
-        dispatch('logout');
-      } else if (isExpired) {
+      if (isExpired) {
         // １時間有効期限切れの場合
         await dispatch('refreshAccessToken', refreshToken);
-        console.log('isExpired 更新しました。');
+        console.log('トークンを更新しました。');
       } else {
-        // 有効期限内の場合 
-        // 残り時間を取得する
+        // 有効期限内の場合、残り時間を取得する
         const expiresInMs = expiryTimeMs - now.getTime();
 
         // 残り時間後にトークンをリフレッシュする処理
@@ -133,12 +124,14 @@ export default new Vuex.Store({
       // StoreIdを削除
       commit('updateStoreId', null);
 
+      // ItemDataを削除
+      commit('getItemDetail', []);
+
       // ローカルストレージから各アイテムを削除
       localStorage.removeItem('StoreId');
       localStorage.removeItem('refreshAccessToken');
       localStorage.removeItem('expiryTimeMs');
       localStorage.removeItem('refreshToken');
-      localStorage.removeItem('ExpiryTimeMs12Hours');
     }, 
     // トークンをリフレッシュする為の関数
     async refreshAccessToken({ dispatch }, refreshToken) {
@@ -164,10 +157,6 @@ export default new Vuex.Store({
       // 1hに設定
       const expiryTimeMs = now.getTime() + authData.expires_in * 1000;
 
-      // 12hも設定
-      const ExpiryTimeMs12Hours = now.getTime() + ((authData.expires_in * 1000) * 12);
-      // const ExpiryTimeMs12Hours = now.getTime() + 1;
-
       // mutationsを実行し、ステートのアクセストークンに保存する
       commit('updateAccessToken', authData.access_token);
 
@@ -179,12 +168,11 @@ export default new Vuex.Store({
       localStorage.setItem('refreshAccessToken', authData.access_token);
       localStorage.setItem('refreshToken', authData.refresh_token);
       localStorage.setItem('expiryTimeMs', expiryTimeMs);
-      localStorage.setItem('ExpiryTimeMs12Hours', ExpiryTimeMs12Hours);
 
       // リフレッシュトークンを使って、1時間置きにトークンを更新する
       setTimeout(() => {
         dispatch('refreshAccessToken', authData.refresh_token);
-        console.log('更新しました。')
+        console.log('1時間おきに更新しました。')
       }, authData.expires_in * 1000);
     }
   }

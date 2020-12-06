@@ -68,9 +68,9 @@ class ItemViewSet(viewsets.ModelViewSet):
   @action(detail=False, methods=['get'])
   def get_item_detail(self, request):
     try:
-      # deleted_at=Noneの商品をJsonにシリアル化
-      item = Item.objects.filter(store_owner=request.user.id)
-      item_list = serializers.serialize('json', item)
+      # オーナーの商品をJsonにシリアル化/削除された商品以外を取得
+      items = Item.objects.filter(store_owner=request.user.id, deleted_at=None)
+      item_list = serializers.serialize('json', items)
     except Exception as err:
       # システム終了以外の全ての組み込み例外
       print(err)
@@ -82,7 +82,7 @@ class ItemViewSet(viewsets.ModelViewSet):
       })
     return HttpResponse(content=item_list, content_type="application/json", status=200)
 
-# 
+# 商品を編集（更新）する
   @action(detail=True, methods=['patch'])
   def update_item(self, request, pk=None):
     # 商品がある場合商品を更新する
@@ -112,6 +112,7 @@ class ItemViewSet(viewsets.ModelViewSet):
       item_obj.item_price = item_price
       item_obj.item_total = item_total
       item_obj.updated_at = timezone.now()
+      item_obj.deleted_at = None
       item_obj.save()
 
       # レスポンスデータ
@@ -160,7 +161,7 @@ class ItemViewSet(viewsets.ModelViewSet):
   def delete_item(self, request, pk=None):
     # itemボタン押下時に、削除日時に押下時の時間を入れる。
     try:
-      item_obj = self.queryset.get(pk=request.data['item_id'])
+      item_obj = self.queryset.get(pk=pk)
       item_obj.item_name = ''
       item_obj.item_img = ''
       item_obj.item_detail = ''

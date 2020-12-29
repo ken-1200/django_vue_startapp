@@ -1,32 +1,59 @@
 <template>
   <div id="app">
-    <footer class="footer appear up">
-      <div class="logo item">
-        <img src="images/logo.svg" alt="" class="logo__img">
-        <span class="logo__kimono">Kimono</span>
-        <span class="logo__style">Style</span>
-      </div>
-      <nav class="footer__anav">
-        <ul class="footer__ul">
-          <li class="footer__li item"><router-link to="/">Service</router-link></li>
-          <li class="footer__li item"><router-link to="/">Contact</router-link></li>
-          <li class="footer__li item"><router-link to="/">Company</router-link></li>
-          <li class="footer__li item"><router-link to="/">Sitemap</router-link></li>
-        </ul>
-        <div class="footer__copyright item">
-          &copy; 2020 Ken
-        </div>
-      </nav>
-    </footer>
+    <v-footer
+      dark
+      padless
+    >
+      <v-card
+        flat
+        tile
+        color="#ECEFF1"
+      >
+        <v-card-text>
+          <v-btn
+            v-for="icon in icons"
+            :key="icon"
+            class="VueBlack--text mx-4"
+            icon
+          >
+            <v-icon size="24px">
+              {{ icon }}
+            </v-icon>
+          </v-btn>
+        </v-card-text>
+  
+        <v-card-text class="VueBlack--text">
+          Phasellus feugiat arcu sapien, et iaculis ipsum elementum sit amet. Mauris cursus commodo interdum. Praesent ut risus eget metus luctus accumsan id ultrices nunc. Sed at orci sed massa consectetur dignissim a sit amet dui. Duis commodo vitae velit et faucibus. Morbi vehicula lacinia malesuada. Nulla placerat augue vel ipsum ultrices, cursus iaculis dui sollicitudin. Vestibulum eu ipsum vel diam elementum tempor vel ut orci. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.
+        </v-card-text>
+  
+        <v-divider></v-divider>
+  
+        <v-card-text class="VueBlack--text">
+          {{ new Date().getFullYear() }} — <strong>&copy; Ken</strong>
+        </v-card-text>
+      </v-card>
+    </v-footer>
   </div>
 </template>
 
 <script>
 export default {
   name: 'Footer',
+  data() {
+    return {
+      icons: [
+        'mdi-facebook',
+        'mdi-twitter',
+        'mdi-linkedin',
+        'mdi-instagram',
+      ],
+    }
+  }
 }
 </script>
 
-<style>
-  
+<style lang="scss">
+.v-application .VueBlack--text {
+  color: $cVueBlack !important;
+}
 </style>

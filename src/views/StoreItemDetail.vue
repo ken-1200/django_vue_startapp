@@ -2,12 +2,85 @@
   <div id="app">
     <!-- 商品詳細 -->
     <p v-if="isErrored">{{ error }}</p>
-    <p><label>商品名：<input v-model="items.item_name" v-bind="items" id="item_name" type="text" name="name" size="40" placeholder="商品名" required=true></label></p>
-    <p><label>詳細：<input v-model="items.item_detail" v-bind="items" id="item_detail" type="text" name="item_detail" size="30" maxlength="40" placeholder="詳細" required=true></label></p>
-    <p><label>値段：<input v-model="items.item_price" v-bind="items" id="item_price" type="number" name="item_price" size="10" maxlength="16" placeholder="値段" required=true></label></p>
-    <p><label>品数：<input v-model="items.item_total" v-bind="items" id="item_total" type="number" name="item_total" size="10" maxlength="16" placeholder="品数" required=true></label></p>
-    <p><label>画像：<input v-model="items.item_img" v-bind="items" id="item_img" type="image" name="item_img" size="10" maxlength="16" placeholder="画像"></label></p>
-    <button @click.stop="updateItem">商品を編集する</button>
+    <v-form
+      ref="form"
+      v-model="valid"
+      lazy-validation
+    >
+      <v-text-field
+        v-model.trim="items.item_name"
+        v-bind="items"
+        :counter="30"
+        :rules="nameRules"
+        label="商品名"
+        prepend-icon="mdi-shopping"
+        required
+      ></v-text-field>
+
+      <v-file-input
+        label="写真"
+        filled
+        placeholder="クリックしてください。"
+        prepend-icon="mdi-camera"
+        background-color="#fbfbfb"
+      ></v-file-input>
+
+      <v-textarea
+        v-model.trim="items.item_detail"
+        v-bind="items"
+        :rules="detailRules"
+        hint="詳細は500文字以下である必要があります。"
+        counter
+        label="詳細"
+        prepend-icon="mdi-form-textarea"
+      ></v-textarea>
+
+      <v-text-field
+        v-model.number="items.item_price"
+        v-bind="items"
+        :rules="priceRules"
+        name="input-10-1"
+        label="値段"
+        type="number"
+        max="10000000"
+        min="100"
+        prepend-icon="mdi-currency-jpy"
+        counter
+        required
+      ></v-text-field>
+
+      <v-text-field
+        v-model.number="items.item_total"
+        v-bind="items"
+        :rules="totalRules"
+        name="input-10-1"
+        label="品数"
+        type="number"
+        prepend-icon="mdi-paper-cut-vertical"
+        max="100"
+        min="1"
+        counter
+        required
+      ></v-text-field>
+
+      <v-btn
+        :disabled="!valid"
+        :loading="loading"
+        color="success"
+        class="mr-4"
+        @click="validate"
+      >
+        編集ボタン
+      </v-btn>
+
+      <v-btn
+        color="error"
+        class="mr-4"
+        @click="reset"
+      >
+        リセットボタン
+      </v-btn>
+    </v-form>
   </div>
 </template>
 
@@ -26,6 +99,26 @@ export default {
         item_img: '',
       },
       error: null,
+      valid: true,
+      loading: false,
+      nameRules: [
+        v => Boolean(v) || '商品名は必須です。',
+        v => (v && v.length <= 30) || '商品名は30文字以下である必要があります。',
+      ],
+      detailRules: [
+        v => Boolean(v) || '詳細は必須です。',
+        v => (v && v.length <= 500) || '詳細は500文字以下である必要があります。'
+      ],
+      priceRules: [
+        v => Boolean(v) || '値段は必須です。',
+        v => v >= 100 || '100円から登録可能です',
+        v => v <= 10000000 || '1000万円まで登録可能です',
+      ],
+      totalRules: [
+        v => Boolean(v) || '品数は必須です。',
+        v => v != 0 || '1個から登録可能です',
+        v => v <= 100 || '100個まで登録可能です',
+      ],
     }
   },
   computed: {
@@ -61,9 +154,24 @@ export default {
         console.log(error);
         this.error = error;
       });
-    }
+    },
+    // ボタン
+    validate() {
+      // 空文字の場合
+      if (this.items.item_name == "" || this.items.item_name == undefined) return;
+
+      // 入力値の検証と商品の編集
+      this.$refs.form.validate();
+      this.updateItem();
+    },
+    reset() {
+      // リセット、エラー文字を削除
+      this.$refs.form.reset();
+    },
   },
-  created() {
+  async created() {
+    // 商品取得
+    await this.$store.dispatch('getItem');
     // Vuex gettersからオーナーの商品リストを取得する
     const allItemData = this.$store.getters.item_data;
     // 該当アイテムを取得

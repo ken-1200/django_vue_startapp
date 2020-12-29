@@ -1,26 +1,83 @@
 <template>
   <div id="app">
-    <h1>商品登録画面</h1>
     <!-- 商品投稿 -->
     <h3>商品を登録する</h3>
-    <p>
-      <label for="name">商品名：</label>
-      <input id="name" type="text" v-model="name">
-    </p>
-    <p>
-      <label for="detail">詳細：</label>
-      <textarea id="detail" v-model="detail"></textarea>
-    </p>
-    <p>
-      <label for="price">値段：</label>
-      <input id="price" type="text" v-model="price">
-    </p>
-    <p>
-      <label for="total">品数：</label>
-      <input id="total" type="text" v-model="total">
-    </p>
-    <br><br>
-    <button @click.stop="createItems">商品を登録する</button>
+    <v-form
+      ref="form"
+      v-model="valid"
+      lazy-validation
+    >
+      <v-text-field
+        v-model.trim="name"
+        :counter="30"
+        :rules="nameRules"
+        label="商品名"
+        prepend-icon="mdi-shopping"
+        required
+      ></v-text-field>
+
+      <v-file-input
+        label="写真"
+        filled
+        placeholder="クリックしてください。"
+        prepend-icon="mdi-camera"
+        background-color="#fbfbfb"
+      ></v-file-input>
+
+      <v-textarea
+        v-model.trim="detail"
+        :rules="detailRules"
+        :placeholder="detailPlaceholder"
+        hint="詳細は500文字以下である必要があります。"
+        counter
+        label="詳細"
+        prepend-icon="mdi-form-textarea"
+      ></v-textarea>
+
+      <v-text-field
+        v-model.number="price"
+        :rules="priceRules"
+        name="input-10-1"
+        label="値段"
+        type="number"
+        max="10000000"
+        min="100"
+        prepend-icon="mdi-currency-jpy"
+        counter
+        required
+      ></v-text-field>
+
+      <v-text-field
+        v-model.number="total"
+        :rules="totalRules"
+        name="input-10-1"
+        label="品数"
+        type="number"
+        prepend-icon="mdi-paper-cut-vertical"
+        max="100"
+        min="1"
+        counter
+        required
+      ></v-text-field>
+
+      <v-btn
+        :disabled="!valid"
+        :loading="loading"
+        color="success"
+        class="mr-4"
+        @click="validate"
+      >
+        登録ボタン
+      </v-btn>
+
+      <v-btn
+        color="error"
+        class="mr-4"
+        @click="reset"
+      >
+        リセットボタン
+      </v-btn>
+    </v-form>
   </div>
 </template>
 
@@ -32,8 +89,29 @@ export default {
     return {
       name: "",
       detail: "",
-      price: 0,
-      total: 0,
+      detailPlaceholder: "ちょうど良いウエイトの裏起毛生地、クラシックシルエットのフーディに、都会的なグラフィックがシルクスクリーンで施されたアイテム。厳選された生地色とプリントカラーはデザイン性に優れ、一年を通し、トレーニングウェアから、街着まで、様々なシーンで重宝する。",
+      price: null,
+      total: null,
+      valid: true,
+      loading: false,
+      nameRules: [
+        v => Boolean(v) || '商品名は必須です。',
+        v => (v && v.length <= 30) || '商品名は30文字以下である必要があります。',
+      ],
+      detailRules: [
+        v => Boolean(v) || '詳細は必須です。',
+        v => (v && v.length <= 500) || '詳細は500文字以下である必要があります。'
+      ],
+      priceRules: [
+        v => Boolean(v) || '値段は必須です。',
+        v => v >= 100 || '100円から登録可能です',
+        v => v <= 10000000 || '1000万円まで登録可能です',
+      ],
+      totalRules: [
+        v => Boolean(v) || '品数は必須です。',
+        v => v != 0 || '1個から登録可能です',
+        v => v <= 100 || '100個まで登録可能です',
+      ],
     }
   },
   computed: {
@@ -42,7 +120,7 @@ export default {
     }
   },
   methods: {
-    createItems() {
+    createdItems() {
       axios.post('/item_list/', {
         item_name: this.name,
         item_detail: this.detail,
@@ -59,8 +137,21 @@ export default {
       .catch(error => {
         console.log(error);
       })
-      this.$router.push('/')
-    }
-  }
+      this.$router.push('/');
+    },
+    // ボタン
+    validate() {
+      // 空文字の場合
+      if (this.name == "" || this.name == undefined) return;
+
+      // 入力値の検証と商品の登録
+      this.$refs.form.validate();
+      this.createdItems();
+    },
+    reset() {
+      // リセット、エラー文字を削除
+      this.$refs.form.reset();
+    },
+  },
 }
 </script>

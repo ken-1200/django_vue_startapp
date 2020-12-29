@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <h1>Welcome to Your Vue.js App</h1>
+  <div id="app">
+    <h1>Welcome to Your Kimono Shop</h1>
     <p>あなたの商品を世界中に届けましょう！ / 登録はこちらから</p>
     <Form/>
   </div>

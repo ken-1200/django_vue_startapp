@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div id="app">
     <h1>Welcome to User!</h1>
     <p>登録画面</p>
     <UserRegisterForm/>

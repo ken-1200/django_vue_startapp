@@ -1,30 +1,67 @@
 <template>
-  <div>
-    <p><label for="email">メールアドレス：<input v-model="store_email" id="email" placeholder="email" type="email"></label></p>
-    <p><label for="password">パスワード：<input v-model="store_password" id="password" placeholder="password" type="password"></label></p>
-    <br><br>
-    <button @click.prevent="login">ログイン</button>
+  <div id="app">
+    <v-form
+      ref="form"
+      v-model="valid"
+      lazy-validation
+    >
+
+      <v-text-field
+        v-model="email"
+        :rules="emailRules"
+        label="E-mail"
+        prepend-icon="mdi-email"
+        required
+      ></v-text-field>
+
+      <v-text-field
+        v-model="password"
+        :append-icon="show ? 'mdi-eye' : 'mdi-eye-off'"
+        :rules="passRules"
+        :type="show ? 'text' : 'password'"
+        name="input-10-1"
+        label="Password"
+        prepend-icon="mdi-lock"
+        @click:append="show = !show"
+        required
+      ></v-text-field>
+
+      <v-btn
+        :disabled="!valid"
+        :loading="loading"
+        color="success"
+        class="mr-4"
+        @click="validate"
+      >
+        ログインボタン
+      </v-btn>
+
+      <v-btn
+        color="error"
+        class="mr-4"
+        @click="reset"
+      >
+        リセットボタン
+      </v-btn>
+    </v-form>
   </div>
 </template>
 
 <script>
+import { loginMixins } from '@/loginMixins';
+
 export default {
+  mixins: [ loginMixins ],
   name: 'Login',
-  data() {
-    return {
-      store_email: "",
-      store_password: "",
-    }
-  },
   methods: {
     login(){
       this.$store.dispatch('login', {
-        store_email: this.store_email,
-        store_password: this.store_password,
+        store_email: this.email,
+        store_password: this.password,
       });
-      this.store_email = "";
-      this.store_password = "";
-    }
+      this.email = "";
+      this.password = "";
+    },
   }
 }
 </script>

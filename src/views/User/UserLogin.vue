@@ -1,13 +1,7 @@
 <template>
   <div id="app">
-    <div>
-      <div>
-        <div>
-          <h1>Userログイン画面</h1>
-          <UserLogin/>
-        </div>
-      </div>
-    </div>
+    <h1>Userログイン画面</h1>
+    <UserLogin/>
   </div>
 </template>
 

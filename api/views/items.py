@@ -53,7 +53,7 @@ class NotFound(APIException):
 # ItemViewSetの作成
 class ItemViewSet(viewsets.ModelViewSet):
   """
-  アイテム GET(ストアオーナーに紐づいた除された商品以外一覧), アイテム GET(削除された商品以外全ての一覧), PATCH(item_idに紐づく商品を更新する), DELETE(レコードは残る)
+  アイテム GET(ストアオーナーに紐づいた除された商品以外一覧), アイテム GET(削除された商品以外全ての一覧), PATCH(item_idに紐づく商品を更新する), DELETEなし
   """
   # パーミッション設定
   # authentication_classesで使用する認証クラスを指定

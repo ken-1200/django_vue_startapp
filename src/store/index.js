@@ -167,8 +167,14 @@ export default new Vuex.Store({
       localStorage.removeItem('userExpiryTimeMs');
     },
 
-
-// ----------------------------------------
+/* ストア側の処理
+  - 商品取得
+  - オートログイン
+  - ログイン
+  - ログアウト
+  - リフレッシュトークン
+  - ローカルストレージにアクセストークンと有効期限時間とリフレッシュトークンを保存し、１時間おきにトークンを更新する
+*/
 
     // 商品取得
     async getItem({ commit }) {
@@ -269,6 +275,9 @@ export default new Vuex.Store({
       localStorage.removeItem('refreshAccessToken');
       localStorage.removeItem('expiryTimeMs');
       localStorage.removeItem('refreshToken');
+
+      // StoreDashBoardに遷移する
+      router.push('/');
     },
     // トークンをリフレッシュする為の関数
     async refreshAccessToken({ dispatch }, refreshToken) {

@@ -19,7 +19,7 @@
             class="d-flex child-flex"
             cols=2 md=3 xl=4
           >
-            <v-card @click.stop="itemEdit(item.pk)">
+            <v-card elevation-24 hover @click.stop="itemEdit(item.pk)">
               <v-img
                 :src="item.fields.item_img"
                 class="white--text align-end"
@@ -77,7 +77,6 @@ export default {
     return {
       detailItems: [],
       error: null,
-      isClosed: true,
     }
   },
   computed: {
@@ -101,7 +100,7 @@ export default {
         Boolean(response.data.data.deleted_at);
 
         // リロードする
-        this.$router.go({ name: 'item_detail', query: { page: this.$store.getters.store_id }})
+        this.$router.go({ name: 'item_detail', query: { page: this.$store.getters.store_id }});
       })
       .catch(error => {
         console.log(error);
@@ -113,7 +112,7 @@ export default {
   async created() {
     // プロミスが帰って来たら(レスポンス)表示する、またはエラー表示
     await this.$store.dispatch('getItem');
-    this.detailItems = this.$store.getters.item_data;
+    this.detailItems = this.$store.getters.storeItemData;
     this.error = this.$store.getters.error;
 
     // エラー表示

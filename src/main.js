@@ -8,6 +8,11 @@ require('./assets/sass/main.scss')
 
 Vue.config.productionTip = false
 
+// filter
+Vue.filter('addComma', v => {
+  return v.toLocaleString();
+});
+
 // baseURL
 axios.defaults.baseURL = 'http://localhost:8001/api/'
 

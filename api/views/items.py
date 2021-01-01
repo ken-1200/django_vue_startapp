@@ -149,8 +149,8 @@ class AllItemViewSet(viewsets.ModelViewSet):
   @action(detail=False, methods=['get'])
   def items_list(self, request):
     try:
-      # deleted_at=Noneの商品をJsonにシリアル化
-      item = Item.objects.filter(deleted_at=None)
+      # オーナー順に昇順に並び替え
+      item = Item.objects.order_by('-store_owner').reverse().filter(deleted_at=None)
       item_list = serializers.serialize('json', item)
     except Exception as err:
       # システム終了以外の全ての組み込み例外

@@ -8,7 +8,7 @@
       lazy-validation
     >
       <v-text-field
-        v-model.trim="name"
+        v-model="name"
         :counter="30"
         :rules="nameRules"
         label="商品名"
@@ -25,7 +25,7 @@
       ></v-file-input>
 
       <v-textarea
-        v-model.trim="detail"
+        v-model="detail"
         :rules="detailRules"
         :placeholder="detailPlaceholder"
         hint="詳細は500文字以下である必要があります。"

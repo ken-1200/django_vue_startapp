@@ -1,6 +1,7 @@
 <template>
   <div id="app">
-    <h1>ログイン画面</h1>
+    <v-card-title>Welcome to Sign in Page!</v-card-title>
+    <v-card-subtitle>こちらからログインしてください</v-card-subtitle>
     <Login/>
   </div>
 </template>

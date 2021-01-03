@@ -45,7 +45,7 @@
         class="mr-4"
         @click="validate"
       >
-        登録ボタン
+        登録する
       </v-btn>
 
       <v-btn
@@ -53,7 +53,7 @@
         class="mr-4"
         @click="reset"
       >
-        リセットボタン
+        修正する
       </v-btn>
 
       <v-btn
@@ -62,7 +62,7 @@
         class="mr-4"
         @click="loginButton"
       >
-        ログインボタン
+        登録済みの方はこちらから
       </v-btn>
     </v-form>
   </div>

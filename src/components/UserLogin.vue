@@ -27,13 +27,21 @@
       ></v-text-field>
 
       <v-btn
+        color="primary"
+        class="mr-4"
+        @click="registerButton"
+      >
+        戻る
+      </v-btn>
+
+      <v-btn
         :disabled="!valid"
         :loading="loading"
         color="success"
         class="mr-4"
         @click="validate"
       >
-        登録ボタン
+        ログイン
       </v-btn>
 
       <v-btn
@@ -41,7 +49,7 @@
         class="mr-4"
         @click="reset"
       >
-        リセットボタン
+        修正する
       </v-btn>
     </v-form>
   </div>
@@ -54,14 +62,17 @@ export default {
   mixins: [ loginMixins ],
   name: 'UserLogin',
   methods: {
-    login(){
-      // ここを編集
-      this.$store.dispatch('userLogin', {
+    async login(){
+      await this.$store.dispatch('userLogin', {
         user_email: this.email,
         password: this.password,
       });
       this.email = "";
       this.password = "";
+    },
+    registerButton() {
+      // login画面に遷移
+      this.$router.push('/user_register');
     },
   }
 }

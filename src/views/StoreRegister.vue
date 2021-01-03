@@ -1,7 +1,7 @@
 <template>
   <div id="app">
-    <h1>Welcome to Your Kimono Shop</h1>
-    <p>あなたの商品を世界中に届けましょう！ / 登録はこちらから</p>
+    <v-card-title>Welcome to Your Kimono Shop</v-card-title>
+    <v-card-subtitle>あなたの商品を世界中に届けましょう！ / 登録はこちらから</v-card-subtitle>
     <Form/>
   </div>
 </template>

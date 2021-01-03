@@ -126,6 +126,7 @@ class UserLogin(APIView):
 
     login_data = {
       'user_id': token.user_id,
+      'user_name': user.user_name,
       'user_email': request_email,
       'user_password': request_password,
       'access_token': token.key,

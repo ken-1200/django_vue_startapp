@@ -73,24 +73,61 @@
         center-active
         grow
       >
-        <v-tab to="/item_register">
-          PRODUCT CREATE
+        <v-tab to="/user_home">
+          USER HOME
         </v-tab>
-        <v-tab :to="{ name: 'item_detail', query: { page: $store.getters.store_id } }">
-          PRODUCT DETAIL
-        </v-tab>
-        <v-tab>
-          ABOUT
+        <v-tab to="/item_list">
+          PRODUCT LISTS
         </v-tab>
         <v-tab>
-          BLOG
+          PRODUCT DETAIL(仮)
         </v-tab>
         <v-tab>
-          CATEGORY
+          BLOG(仮)
         </v-tab>
-        <v-tab @click.prevent="logout()">
-          LOGOUT
+        <v-tab>
+          CATEGORY(仮)
         </v-tab>
+        <v-row justify="center">
+          <v-dialog
+            v-model="dialog"
+            persistent
+            max-width="290"
+          >
+            <template v-slot:activator="{ on, attrs }">
+              <v-tab
+                v-bind="attrs"
+                v-on="on"
+              >
+                USER LOGOUT
+              </v-tab>
+            </template>
+            <v-card>
+              <v-card-title class="headline">
+                ログアウトしますか？
+              </v-card-title>
+              <v-card-text>選択してください</v-card-text>
+              <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn
+                  color="green darken-1"
+                  text
+                  @click="dialog = false"
+                >
+                  キャンセル
+                </v-btn>
+                <v-btn
+                  color="green darken-1"
+                  text
+                  @click="dialog = false"
+                  @click.stop="logout"
+                >
+                  OK
+                </v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-dialog>
+        </v-row>
       </v-tabs>
     </template>
   </v-app-bar>
@@ -98,15 +135,16 @@
 
 <script>
 export default {
-  name: 'StoreDashBoardHeader',
+  name: 'UserHeader',
   data() {
     return {
       items: [
-        { title: 'ショップ設定'},
-        { title: '商品を登録' },
-        { title: '商品をみる' },
+        { title: '設定（仮）'},
+        { title: 'ヘルプ（仮）' },
+        { title: 'お問い合わせ（仮）' },
         { title: 'ログアウト' },         
       ],
+      dialog: false,
     }
   },
   methods: {
@@ -116,10 +154,10 @@ export default {
           this.$router.push('/');
           break;
         case 1:
-          this.$router.push('/item_register');
+          this.$router.push('/');
           break;        
         case 2:
-          this.$router.push({ name: 'item_detail', query: { page: this.$store.getters.store_id } });
+          this.$router.push('/');
           break;
         case 3:
           this.logout();
@@ -129,7 +167,8 @@ export default {
       }
     },
     logout() {
-      this.$store.dispatch('logout');
+      // ログアウト
+      this.$store.dispatch('user_logout');
     },
   }
 }

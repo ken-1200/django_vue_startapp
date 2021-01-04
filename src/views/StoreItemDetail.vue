@@ -1,14 +1,20 @@
 <template>
   <div id="app">
     <!-- 商品詳細 -->
+    <v-card-title>商品を編集する</v-card-title>
+    <v-card-subtitle>あなたの商品をここで編集しましょう</v-card-subtitle>
+
+    <!-- エラー -->
     <p v-if="isErrored">{{ error }}</p>
+
+    <!-- フォーム -->
     <v-form
       ref="form"
       v-model="valid"
       lazy-validation
     >
       <v-text-field
-        v-model.trim="items.item_name"
+        v-model="items.item_name"
         v-bind="items"
         :counter="30"
         :rules="nameRules"
@@ -26,7 +32,7 @@
       ></v-file-input>
 
       <v-textarea
-        v-model.trim="items.item_detail"
+        v-model="items.item_detail"
         v-bind="items"
         :rules="detailRules"
         hint="詳細は500文字以下である必要があります。"
@@ -173,7 +179,7 @@ export default {
     // 商品取得
     await this.$store.dispatch('getItem');
     // Vuex gettersからオーナーの商品リストを取得する
-    const allItemData = this.$store.getters.item_data;
+    const allItemData = this.$store.getters.storeItemData;
     // 該当アイテムを取得
     const getApplicableItem = allItemData.filter(element => element.pk == this.$route.params.id);
 
@@ -187,8 +193,18 @@ export default {
         item_total: el.fields.item_total,
         item_img: el.fields.item_img,
       }
-      console.log(this.items);
     });
+
+    this.error = this.$store.getters.error;
+
+    // エラー表示
+    if (this.items.length != 0) {
+      // エラー内容表示(ex)Notfound..)
+      this.error = this.$store.getters.error;
+    } else {
+      // 商品がない時(0個返却された)
+      this.error = ' 商品がありません。';
+    }
   },
 }
 </script>

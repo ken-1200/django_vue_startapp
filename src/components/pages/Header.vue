@@ -10,7 +10,7 @@
 
   <!-- 左のアイコン -->
     <v-app-bar-nav-icon>
-      <img src="../../assets/logo.png" alt="">
+      <img src="../../assets/logo.png" alt="" @click="goToHome">
     </v-app-bar-nav-icon>
 
   <!-- タイトル -->
@@ -58,7 +58,11 @@
               align="center"
               justify="space-around"
             >
-              <v-btn depressed>
+              <v-btn
+                class="ma-2"
+                color="success"
+                depressed
+              >
                 {{ item.title }}
               </v-btn>
             </v-row>
@@ -73,23 +77,23 @@
         center-active
         grow
       >
-        <v-tab to="/item_list">
+        <v-tab to="/">
           HOME
         </v-tab>
-        <v-tab to="/">
-          SHOP OWNER
+        <v-tab to="/item_list">
+          SHOP LISTS
         </v-tab>
         <v-tab>
-          ABOUT
+          ABOUT(仮)
         </v-tab>
         <v-tab>
-          BLOG
+          BLOG(仮)
         </v-tab>
         <v-tab>
-          CATEGORY
+          CATEGORY(仮)
         </v-tab>
         <v-tab>
-          CONTACT
+          CONTACT(仮)
         </v-tab>
       </v-tabs>
     </template>
@@ -102,25 +106,27 @@ export default {
   data() {
     return {
       items: [
-        { title: '新規登録'},
+        { title: '新規会員登録'},
         { title: 'ログイン' },
       ],
-      home: "/item_list",
-      shopOwner: "/",
     }
   },
   methods: {
     clickMenu(index) {
       switch (index) {
         case 0:
-          this.$router.push('/store_register');
+          this.$router.push('/user_register');
           break;
         case 1:
-          this.$router.push('/store_login');
+          this.$router.push('/user_login');
           break;
         default:
           this.$router.push('/');
       }
+    },
+    goToHome() {
+      // ホーム画面遷移時コールバック関数を呼びエラー回避
+      this.$router.push('/', () => {});
     }
   }
 }

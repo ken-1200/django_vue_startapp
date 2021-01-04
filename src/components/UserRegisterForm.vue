@@ -45,7 +45,7 @@
         class="mr-4"
         @click="validate"
       >
-        登録ボタン
+        登録する
       </v-btn>
 
       <v-btn
@@ -53,7 +53,16 @@
         class="mr-4"
         @click="reset"
       >
-        リセットボタン
+        修正する
+      </v-btn>
+
+      <v-btn
+        :loading="loading"
+        color="primary"
+        class="mr-4"
+        @click="loginButton"
+      >
+        登録済みの方はこちらから
       </v-btn>
     </v-form>
   </div>
@@ -113,6 +122,10 @@ export default {
       setTimeout(() => {
         this.reset();
       }, 3600);
+    },
+    loginButton() {
+      // login画面に遷移
+      this.$router.push('/user_login');
     },
   }
 };

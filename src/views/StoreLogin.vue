@@ -1,6 +1,7 @@
 <template>
   <div id="app">
-    <h1>ログイン画面</h1>
+    <v-card-title>Welcome to Sign in Page!</v-card-title>
+    <v-card-subtitle>こちらからログインしてください</v-card-subtitle>
     <Login/>
   </div>
 </template>
@@ -14,3 +15,10 @@ export default {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+.v-card__subtitle {
+  text-align: left;
+  padding: 16px;
+}
+</style>

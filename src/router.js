@@ -5,13 +5,19 @@ import store from './store';
 const StoreLogin = () => import(/* webpackChunkName: "StoreLogin" */"./views/StoreLogin.vue");
 const ItemList = () => import(/* webpackChunkName: "ItemList" */"./views/ItemList.vue");
 const StoreRegister = () => import(/* webpackChunkName: "StoreRegister" */"./views/StoreRegister.vue");
-const StoreDashBoard = () => import(/* webpackChunkName: "StoreDashBoard" */"./views/StoreDashBoard.vue");
+const DashBoard = () => import(/* webpackChunkName: "DashBoard" */"./views/DashBoard.vue");
 const ItemRegister = () => import(/* webpackChunkName: "ItemRegister" */"./views/ItemRegister.vue");
 const StoreItemList = () => import(/* webpackChunkName: "StoreItemList" */"./views/StoreItemList.vue");
 const StoreItemDetail = () => import(/* webpackChunkName: "StoreItemDetail" */"./views/StoreItemDetail.vue");
+const ItemDetail = () => import(/* webpackChunkName: "ItemDetail" */"./views/ItemDetail.vue");
+const ItemCart = () => import(/* webpackChunkName: "ItemCart" */"./views/ItemCart.vue");
+const ItemCartOrder = () => import(/* webpackChunkName: "ItemCartOrder" */"./views/ItemCartOrder.vue");
+const PaymentConfirmed = () => import(/* webpackChunkName: "PaymentConfirmed" */"./views/PaymentConfirmed.vue");
+const StoreHomePage = () => import(/* webpackChunkName: "StoreHomePage" */"./views/StoreHomePage.vue");
 
 const UserRegister = () => import(/* webpackChunkName: "UserRegister" */"./views/User/UserRegister.vue");
 const UserLogin = () => import(/* webpackChunkName: "UserLogin" */"./views/User/UserLogin.vue");
+const UserHomePage = () => import(/* webpackChunkName: "UserHomePage" */"./views/User/UserHomePage.vue");
 
 
 Vue.use(Router);
@@ -21,7 +27,7 @@ export default new Router({
   routes: [
     {
       path: '/',
-      component: StoreDashBoard,
+      component: DashBoard,
     },
     {
       path: '/store_register',
@@ -44,6 +50,10 @@ export default new Router({
           next();
         }
       }
+    },
+    {
+      path: '/store_home',
+      component: StoreHomePage,
     },
     {
       path: '/item_register',
@@ -79,7 +89,7 @@ export default new Router({
         if (store.getters.store_id) { // ストアidがない場合は、商品詳細へ
           next();
         } else {
-          next('/item_detail/');
+          next('/item_detail');
         }
       }
     },
@@ -90,6 +100,26 @@ export default new Router({
     {
       path: '/user_login',
       component: UserLogin,
+    },
+    {
+      path: '/user_home',
+      component: UserHomePage,
+    },
+    {
+      path: '/items/:id',
+      component: ItemDetail,
+    },
+    {
+      path: '/order/cart/kinomo',
+      component: ItemCart,
+    },
+    {
+      path: '/order/cart/kinomo/:id',
+      component: ItemCartOrder,
+    },
+    {
+      path: '/payment',
+      component: PaymentConfirmed,
     },
     // {
     //   path: '/item_page',

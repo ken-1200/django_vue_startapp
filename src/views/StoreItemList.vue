@@ -1,13 +1,14 @@
 <template>
   <div id="app">
     <!-- 商品詳細一覧 -->
-    <h1>自分の商品一覧画面(権限がないと見れない)</h1>
+    <v-card-title>公開中の商品一覧</v-card-title>
+    <v-card-subtitle>あなたの商品をここで確認しましょう</v-card-subtitle>
+
+    <!-- エラー -->
     <p v-if="isErrored">{{ error }}</p>
 
     <v-layout wrap row>
       <v-flex cols=2 md=3 xl=4>
-        <v-card-title class="item_list">NEW KIMONO ARRIVAL</v-card-title>
-
         <transition-group
           name="fade"
           tag="div"
@@ -19,7 +20,12 @@
             class="d-flex child-flex"
             cols=2 md=3 xl=4
           >
-            <v-card elevation-24 hover @click.stop="itemEdit(item.pk)">
+            <v-card
+              elevation-24
+              hover
+              @click.stop="itemEdit(item.pk)"
+              outlined
+            >
               <v-img
                 :src="item.fields.item_img"
                 class="white--text align-end"

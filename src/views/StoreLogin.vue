@@ -15,3 +15,10 @@ export default {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+.v-card__subtitle {
+  text-align: left;
+  padding: 16px;
+}
+</style>

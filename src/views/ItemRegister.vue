@@ -1,7 +1,10 @@
 <template>
   <div id="app">
     <!-- 商品投稿 -->
-    <h3>商品を登録する</h3>
+    <v-card-title>商品を登録する</v-card-title>
+    <v-card-subtitle>あなただけの商品を登録しましょう</v-card-subtitle>
+
+    <!-- フォーム -->
     <v-form
       ref="form"
       v-model="valid"
@@ -75,7 +78,7 @@
         class="mr-4"
         @click="reset"
       >
-        リセットボタン
+        編集ボタン
       </v-btn>
     </v-form>
   </div>

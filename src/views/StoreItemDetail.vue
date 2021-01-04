@@ -1,7 +1,13 @@
 <template>
   <div id="app">
     <!-- 商品詳細 -->
+    <v-card-title>商品を編集する</v-card-title>
+    <v-card-subtitle>あなたの商品をここで編集しましょう</v-card-subtitle>
+
+    <!-- エラー -->
     <p v-if="isErrored">{{ error }}</p>
+
+    <!-- フォーム -->
     <v-form
       ref="form"
       v-model="valid"

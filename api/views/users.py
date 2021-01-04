@@ -74,12 +74,17 @@ class UserRefreshToken(APIView):
       return JsonResponse({'message': 'リフレッシュトークンが違います。'}, status=403)
     token = Token.objects.get(key=refresh_key)
 
+    # ユーザー情報取得
+    user = User.objects.get(id=token.user_id)
+
     # リフレッシュトークンを使ってアクセストークンのアクセス日時を更新する
     token.created = timezone.now()
     print('アクセストークンの生成時間を最新に更新しました。')
 
     response = {
       'user_id': token.user_id,
+      'user_name': user.user_name,
+      'user_email': user.user_email,
       'access_token': token.key,
       'refresh_token': token.key,
       'expires_in': 3600,

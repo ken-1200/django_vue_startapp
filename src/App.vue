@@ -6,12 +6,18 @@
     <!-- ヘッダー -->
     <header class="header">
       <!-- 認証無しの時に表示 -->
-      <template v-if="!isAuthenticated">
+      <template v-if="!isAuthenticated && !isAuthenticatedUser">
         <Header/>
       </template>
-      <!-- 認証あり -->
+
+      <!--ストア認証あり -->
       <template v-if="isAuthenticated">
-        <StoreDashBoardHeader/>
+        <StoreHeader/>
+      </template>
+
+      <!-- ユーザー認証あり -->
+      <template v-if="isAuthenticatedUser">
+        <UserHeader/>
       </template>
     </header>
 
@@ -31,7 +37,8 @@
 <script>
 import Header from './components/pages/Header.vue'
 import Footer from './components/pages/Footer.vue'
-import StoreDashBoardHeader from './components/pages/StoreDashBoardHeader.vue'
+import StoreHeader from './components/pages/StoreHeader.vue'
+import UserHeader from './components/pages/UserHeader.vue'
 import ScrollObserver from './scrollMixins.js'
 
 export default {
@@ -39,7 +46,8 @@ export default {
   components: {
     Header,
     Footer, 
-    StoreDashBoardHeader,
+    StoreHeader,
+    UserHeader,
   },
   data() {
     return {
@@ -64,6 +72,10 @@ export default {
     isAuthenticated() {
       // access_tokenがある場合
       return this.$store.getters.access_token != null; 
+    },
+    isAuthenticatedUser() {
+      // access_tokenがある場合
+      return this.$store.getters.user_access_token != null; 
     },
   },
   mounted() {

@@ -10,7 +10,7 @@
 
   <!-- 左のアイコン -->
     <v-app-bar-nav-icon>
-      <img src="../../assets/logo.png" alt="" @click="goToHome">
+      <img src="../../assets/logo.png" alt="">
     </v-app-bar-nav-icon>
 
   <!-- タイトル -->
@@ -58,11 +58,7 @@
               align="center"
               justify="space-around"
             >
-              <v-btn
-                class="ma-2"
-                color="success"
-                depressed
-              >
+              <v-btn depressed>
                 {{ item.title }}
               </v-btn>
             </v-row>
@@ -77,14 +73,14 @@
         center-active
         grow
       >
-        <v-tab to="/">
-          HOME
+        <v-tab to="/user_home">
+          USER HOME
         </v-tab>
         <v-tab to="/item_list">
-          SHOP LISTS
+          PRODUCT LISTS
         </v-tab>
         <v-tab>
-          ABOUT(仮)
+          PRODUCT DETAIL(仮)
         </v-tab>
         <v-tab>
           BLOG(仮)
@@ -92,9 +88,46 @@
         <v-tab>
           CATEGORY(仮)
         </v-tab>
-        <v-tab>
-          CONTACT(仮)
-        </v-tab>
+        <v-row justify="center">
+          <v-dialog
+            v-model="dialog"
+            persistent
+            max-width="290"
+          >
+            <template v-slot:activator="{ on, attrs }">
+              <v-tab
+                v-bind="attrs"
+                v-on="on"
+              >
+                USER LOGOUT
+              </v-tab>
+            </template>
+            <v-card>
+              <v-card-title class="headline">
+                ログアウトしますか？
+              </v-card-title>
+              <v-card-text>選択してください</v-card-text>
+              <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn
+                  color="green darken-1"
+                  text
+                  @click="dialog = false"
+                >
+                  キャンセル
+                </v-btn>
+                <v-btn
+                  color="green darken-1"
+                  text
+                  @click="dialog = false"
+                  @click.stop="logout"
+                >
+                  OK
+                </v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-dialog>
+        </v-row>
       </v-tabs>
     </template>
   </v-app-bar>
@@ -102,64 +135,41 @@
 
 <script>
 export default {
-  name: 'Header',
+  name: 'UserHeader',
   data() {
     return {
       items: [
-        { title: '新規会員登録'},
-        { title: 'ログイン' },
+        { title: '設定（仮）'},
+        { title: 'ヘルプ（仮）' },
+        { title: 'お問い合わせ（仮）' },
+        { title: 'ログアウト' },         
       ],
+      dialog: false,
     }
   },
   methods: {
     clickMenu(index) {
       switch (index) {
         case 0:
-          this.$router.push('/user_register');
+          this.$router.push('/');
           break;
         case 1:
-          this.$router.push('/user_login');
+          this.$router.push('/');
+          break;        
+        case 2:
+          this.$router.push('/');
+          break;
+        case 3:
+          this.logout();
           break;
         default:
           this.$router.push('/');
       }
     },
-    goToHome() {
-      // ホーム画面遷移時コールバック関数を呼びエラー回避
-      this.$router.push('/', () => {});
-    }
+    logout() {
+      // ログアウト
+      this.$store.dispatch('user_logout');
+    },
   }
 }
 </script>
-
-<style lang="scss">
-#toolbar {
-  &__title {
-    padding-left: 7px;
-    padding-top: 0px;
-    padding-bottom: 0px;
-    display: flex;
-  }
-}
-.toolbar {
-  &__link {
-    color: $cVueBlack !important;
-    font-weight: 400;
-    font-size: 1.7rem;
-    font-family: "YuMincho" !important;
-  }
-
-  &__style {
-    font-size: 12px;
-    color: $cSubBlack;
-  }
-}
-.tabs {
-  &__link {
-    color: rgba(0,0,0,.54) !important;
-  }
-}
-img {
-  width: 3.2em;
-}
-</style>

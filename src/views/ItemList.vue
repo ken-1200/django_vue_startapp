@@ -2,17 +2,10 @@
   <div id="app">
     <!-- 商品一覧 -->
     <v-container fluid>
-      <!-- <ul>
-        <li>
-          <router-link to="/user_register">ユーザー登録</router-link>
-        <li>
-          <router-link to="/user_login">ユーザーLogin</router-link>
-        </li> 
-        <li>
-          <a @click="logout()">ユーザーログアウト</a>
-        </li>
-      </ul>
-      <hr> -->
+
+      <!-- エラー -->
+      <p v-if="isErrored">{{ error }}</p>
+
       <v-layout wrap row>
         <v-flex cols=2 md=3 xl=4>
           <v-carousel
@@ -63,15 +56,20 @@
               class="d-flex child-flex"
               cols=2 md=3 xl=4
             >
-              <v-card elevation-24 hover>
+              <v-card
+                elevation-24
+                hover
+                @click.stop="itemDetail(item.pk)"
+                outlined
+              >
                 <v-img
-                  :src="item.item_img"
+                  :src="item.fields.item_img"
                   class="white--text align-end"
                   gradient="to bottom, rgba(0,0,0,.1), rgba(0,0,0,.5)"
                   aspect-ratio="1"
                 >
                   <v-card-title
-                    v-text="item.item_name"
+                    v-text="item.fields.item_name"
                   ></v-card-title>
 
                   <!-- <template v-slot:placeholder>
@@ -89,17 +87,17 @@
                 </v-img>
 
                 <v-card-subtitle
-                  v-text="item.item_detail"
+                  v-text="item.fields.item_detail"
                 ></v-card-subtitle>
 
                 <v-card-actions>
                   <v-spacer></v-spacer>
                   <v-btn icon>
-                    <v-icon x-small>{{ item.item_price }}円</v-icon>
+                    <v-icon x-small>{{ item.fields.item_price }}円</v-icon>
                   </v-btn>
 
                   <v-btn icon>
-                    <v-icon x-small>{{ item.item_total }}個</v-icon>
+                    <v-icon x-small>{{ item.fields.item_total }}個</v-icon>
                   </v-btn>
                 </v-card-actions>
               </v-card>
@@ -112,17 +110,11 @@
 </template>
 
 <script>
-import axios from 'axios'
-
 export default {
   data() {
     return {
       items: [],
-      cards: [
-        { title: 'Pre-fab homes', src: 'https://cdn.vuetifyjs.com/images/cards/house.jpg', flex: 3 },
-        { title: 'Favorite road trips', src: 'https://cdn.vuetifyjs.com/images/cards/road.jpg', flex: 3 },
-        { title: 'Best airlines', src: 'https://cdn.vuetifyjs.com/images/cards/plane.jpg', flex: 3 },
-      ],
+      error: null,
       colors: [
         'green',
         'secondary',
@@ -141,22 +133,27 @@ export default {
     }
   },
   methods: {
-    logout() {
-      this.$store.dispatch('user_logout');
+    itemDetail(item_id) {
+      this.$router.push(`/items/${item_id}`);
+    },
+    isErrored() {
+      return this.error != null;
     },
   },
-  created() {
-    // ここは、ユーザー側、ストア側両方が見れる商品一覧 #feature/t17で昇順にしたAPI作成済
-    axios.get('/all/items_list/')
-    .then(response => {
-      console.log(response.data);
-      response.data.forEach(cb => {
-        this.items.push(cb.fields);
-      });
-    })
-    .catch(error => {
-      console.log(error)
-    });
+  async created() {
+    // ここは、ユーザー側、ストア側両方が見れる商品一覧
+    await this.$store.dispatch('getItemList');
+    this.items = this.$store.getters.allItemListData;
+    this.error = this.$store.getters.error;
+
+    // エラー表示
+    if (this.items.length != 0) {
+      // エラー内容表示(ex)Notfound..)
+      this.error = this.$store.getters.error;
+    } else {
+      // 商品がない時(0個返却された)
+      this.error = ' 商品がありません。';
+    }
   },
 }
 </script>

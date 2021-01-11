@@ -302,6 +302,8 @@ h1 {
   }
 }
 .v-btn {
+  color: white !important;
+
   &__content {
     align-items: center;
     color: inherit;
@@ -310,7 +312,6 @@ h1 {
     justify-content: inherit;
     line-height: normal;
     position: relative;
-    color: white;
   }
 }
 .btn {

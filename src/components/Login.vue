@@ -77,3 +77,12 @@ export default {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+.v-btn {
+  height: 36px;
+  min-width: 64px;
+  padding: 0 16px;
+  margin-top: 10px;
+}
+</style>

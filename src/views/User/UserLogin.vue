@@ -1,8 +1,10 @@
 <template>
   <div id="app">
-    <v-card-title>Welcome to Sign in Page!</v-card-title>
-    <v-card-subtitle>こちらからログインしてください</v-card-subtitle>
-    <UserLogin/>
+    <v-container style="height: 1000px;">
+      <v-card-title>Welcome to Sign in Page!</v-card-title>
+      <v-card-subtitle>こちらからログインしてください</v-card-subtitle>
+      <UserLogin/>
+    </v-container>
   </div>
 </template>
 

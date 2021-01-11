@@ -23,7 +23,7 @@
 
     <!-- main -->
     <v-main>
-      <v-container style="height: 3000px;">
+      <v-container>
         <router-view></router-view>
       </v-container>
     </v-main>

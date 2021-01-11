@@ -108,8 +108,12 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.v-card__subtitle {
-  text-align: left;
-  padding: 16px;
+.v-card {
+  margin-bottom: 10px;
+
+  &__subtitle {
+    text-align: left;
+    padding: 16px;
+  }
 }
 </style>

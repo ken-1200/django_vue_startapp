@@ -73,6 +73,7 @@
                 dense
                 solo
                 no-data-text="在庫がありません。"
+                style="width: 45%"
               ></v-select>
 
               <v-btn

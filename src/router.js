@@ -110,11 +110,11 @@ export default new Router({
       component: ItemDetail,
     },
     {
-      path: '/order/cart/kinomo',
+      path: '/order/cart/furisode',
       component: ItemCart,
     },
     {
-      path: '/order/cart/kinomo/:id',
+      path: '/order/cart/furisode/:id',
       component: ItemCartOrder,
     },
     {

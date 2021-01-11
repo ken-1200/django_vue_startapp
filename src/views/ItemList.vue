@@ -3,63 +3,51 @@
     <!-- 商品一覧 -->
     <v-container fluid>
 
-      <!-- エラー -->
-      <p v-if="isErrored">{{ error }}</p>
-
       <v-layout wrap row>
-        <v-flex cols=2 md=3 xl=4>
+        <v-flex cols=12 md=3 xl=4>
           <v-carousel
             :continuous="true"
             :cycle="cycle"
             :show-arrows="true"
             hide-delimiter-background
             delimiter-icon="mdi-minus"
-            height="500"
+            height="800"
           >
             <v-carousel-item
               v-for="(slide, i) in slides"
               :key="i"
+              :src="slide.src"
             >
-              <v-sheet
-                :color="colors[i]"
-                height="100%"
-                tile
-              >
-                <v-row
-                  class="fill-height"
-                  align="center"
-                  justify="center"
-                >
-                  <div class="display-3">
-                    {{ slide }} Slide
-                  </div>
-                </v-row>
-              </v-sheet>
             </v-carousel-item>
           </v-carousel>
 
-          <v-card-title>Infomation</v-card-title>
-          <v-card-text>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque a leo ante. Vivamus ac lacinia diam. Aenean sed magna ligula. Vivamus ultrices euismod sapien, non egestas erat semper quis. Curabitur lorem erat, finibus at fringilla ut, egestas id sapien. Suspendisse dignissim felis vitae urna ultrices varius. Integer vulputate augue scelerisque.
-          </v-card-text>
+          <v-card outlined color="#f4f7fa">
+            <v-card-title id="titleInfo">Infomation</v-card-title>
+            <v-card-text>
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque a leo ante. Vivamus ac lacinia diam. Aenean sed magna ligula. Vivamus ultrices euismod sapien, non egestas erat semper quis. Curabitur lorem erat, finibus at fringilla ut, egestas id sapien. Suspendisse dignissim felis vitae urna ultrices varius. Integer vulputate augue scelerisque.
+            </v-card-text>
 
-          <v-card-title class="item_list">NEW KIMONO ARRIVAL</v-card-title>
+            <v-card-title class="item_list">NEW FURISODE ARRIVAL</v-card-title>
+          </v-card>
+
+          <!-- エラー -->
+          <template v-if="isErrored">{{ error }}</template>
 
           <transition-group
-          name="fade"
-          tag="div"
-          class="row row--dense"
+            name="fade"
+            tag="div"
+            class="row row--dense"
           >
             <v-col
               v-for="(item, index) in items"
               :key="index"
               class="d-flex child-flex"
-              cols=2 md=3 xl=4
+              cols=12 md=3 xl=4
             >
               <v-card
+                @click.stop="itemDetail(item.pk)"
                 elevation-24
                 hover
-                @click.stop="itemDetail(item.pk)"
                 outlined
               >
                 <v-img
@@ -67,12 +55,10 @@
                   class="white--text align-end"
                   gradient="to bottom, rgba(0,0,0,.1), rgba(0,0,0,.5)"
                   aspect-ratio="1"
+                  height="200px"
                 >
-                  <v-card-title
-                    v-text="item.fields.item_name"
-                  ></v-card-title>
 
-                  <!-- <template v-slot:placeholder>
+                  <template v-slot:placeholder>
                     <v-row
                       class="fill-height ma-0"
                       align="center"
@@ -83,9 +69,13 @@
                         color="grey lighten-5"
                       ></v-progress-circular>
                     </v-row>
-                  </template> -->
+                  </template>
                 </v-img>
 
+                <!-- タイトル/サブタイトル -->
+                <v-card-title
+                  v-text="item.fields.item_name"
+                ></v-card-title>
                 <v-card-subtitle
                   v-text="item.fields.item_detail"
                 ></v-card-subtitle>
@@ -124,11 +114,24 @@ export default {
       ],
       cycle: true,
       slides: [
-        'First',
-        'Second',
-        'Third',
-        'Fourth',
-        'Fifth',
+        {
+          src: require('../../public/image/sample1.jpg'),
+        },
+        {
+          src: require('../../public/image/sample2.jpg'),
+        },
+        {
+          src: require('../../public/image/sample3.jpg'),
+        },
+        {
+          src: require('../../public/image/sample4.jpg'),
+        },
+        {
+          src: require('../../public/image/sample5.jpg'),
+        },
+        {
+          src: require('../../public/image/sample6.jpg'),
+        },
       ],
     }
   },
@@ -144,6 +147,25 @@ export default {
     // ここは、ユーザー側、ストア側両方が見れる商品一覧
     await this.$store.dispatch('getItemList');
     this.items = this.$store.getters.allItemListData;
+
+    this.items.forEach(el => {
+      // 商品詳細を格納
+      const text = el.fields.item_detail;
+      
+      if (!(text.length <= 100)) {
+        // 75文字以上の文章は75字以降に...をつける
+        el.fields.item_detail = text.substring(0, 74) + "...";
+      }
+
+      // 画像がないものはこっち
+      if (el.fields.item_img == "") {
+        el.fields.item_img = "http://localhost:8001/media/image/sample_image.jpg";
+      } else {
+        // 画像あり
+        el.fields.item_img = "http://localhost:8001/media/" + el.fields.item_img;
+      }
+    });
+
     this.error = this.$store.getters.error;
 
     // エラー表示
@@ -158,7 +180,7 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 /* fade-move */
 .fade-move {
   transition: transform 1.26s;
@@ -184,9 +206,30 @@ export default {
   height: 36px;
   width: 32px;
 }
-.v-card__subtitle {
-  text-align: left;
-  padding: 16px;
+.v-card {
+  &__title {
+    align-items: center;
+    text-align: left;
+    display: flex;
+    flex-wrap: wrap;
+    font-size: .701rem;
+    font-weight: 500;
+    letter-spacing: .0125em;
+    line-height: 2rem;
+    word-break: break-all;
+  }
+
+  &__subtitle {
+    text-align: left;
+    padding: 16px;
+    font-size: .669rem;
+    font-weight: 400;
+    line-height: 1.375rem;
+    letter-spacing: .0071428571em;
+  }
+}
+#titleInfo {
+  font-size: 1.25rem;
 }
 .item_list {
   justify-content: center;

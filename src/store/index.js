@@ -312,10 +312,25 @@ export default new Vuex.Store({
     deleteCartInfo({ commit }, id) {
       commit('deleteCartInfo', id);
     },
-    // 購入する
-    // payment() {
-      
-    // }
+    // 購入情報を格納
+    getPaymentInfo({ commit }) {
+      axios.get('/payments/get_payment_info/', {
+        // 第二引数にヘッダー
+        headers: {
+          Authorization: `Bearer ${this.getters.user_access_token}`
+        }
+      })
+      .then(response => {
+        console.log(response.data);
+        // 購入情報をコミット
+        commit('getPaymentInfo', response.data);
+      })
+      .catch(error => {
+        console.log(error);
+        // エラー処理
+        this.getters.error = error;
+      });
+    },
 
 /* ストア側の処理
   - 商品取得

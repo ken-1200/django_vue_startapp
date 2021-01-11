@@ -128,7 +128,7 @@ export default {
       this.$store.dispatch('addToCart', this.addCart);
     },
     goToCart() {
-      this.$router.push('/order/cart/kinomo');
+      this.$router.push('/order/cart/furisode');
       this.addCart.alert = false;
     }
   },

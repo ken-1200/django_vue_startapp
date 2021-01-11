@@ -139,6 +139,8 @@ export default {
     itemDetail(item_id) {
       this.$router.push(`/items/${item_id}`);
     },
+  },
+  computed: {
     isErrored() {
       return this.error != null;
     },

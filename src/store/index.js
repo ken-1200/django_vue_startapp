@@ -170,7 +170,7 @@ export default new Vuex.Store({
 
         if (this.getters.addToCart.length != 0) {
           // カートに商品が入っている場合は支払い確認画面
-          router.push(`/order/cart/kinomo/${id}`);
+          router.push(`/order/cart/furisode/${id}`);
         } else {
           // 商品一覧画面
           router.push('/user_home');
@@ -285,7 +285,7 @@ export default new Vuex.Store({
         commit('getItemInfo', itemData);
 
         // ページ遷移
-        router.push('/order/cart/kinomo');
+        router.push('/order/cart/furisode');
       } else {
         // アラートを表示
         itemData.alert = true;
@@ -329,7 +329,7 @@ export default new Vuex.Store({
     // 商品取得
     async getItem({ commit }) {
       await axios.get(`/items/get_item_detail/?page=${this.getters.store_id}`, {
-        // 第二引数にヘッダー //ユーザー側の認証もしくは、認証しない状態でのアクセス可能なエンドポイントに変更 
+        // 第二引数にヘッダー
         headers: {
           Authorization: `Bearer ${this.getters.access_token}`
         }

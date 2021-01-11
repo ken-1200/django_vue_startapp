@@ -52,12 +52,12 @@
               >
                 <v-img
                   :src="item.fields.item_img"
-                  class="white--text align-end"
                   gradient="to bottom, rgba(0,0,0,.1), rgba(0,0,0,.5)"
                   aspect-ratio="1"
                   height="200px"
                 >
 
+                  <!-- プログレス -->
                   <template v-slot:placeholder>
                     <v-row
                       class="fill-height ma-0"

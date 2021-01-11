@@ -5,7 +5,7 @@
     <v-card-subtitle>あなたの商品をここで編集しましょう</v-card-subtitle>
 
     <!-- エラー -->
-    <p v-if="isErrored">{{ error }}</p>
+    <template v-if="isErrored">{{ error }}</template>
 
     <!-- フォーム -->
     <v-form
@@ -24,6 +24,7 @@
       ></v-text-field>
 
       <v-file-input
+        @change="onImageUploaded"
         label="写真"
         filled
         placeholder="クリックしてください。"
@@ -102,7 +103,7 @@ export default {
         item_detail: '',
         item_price: null,
         item_total: null,
-        item_img: '',
+        item_img: null,
       },
       error: null,
       valid: true,
@@ -136,9 +137,28 @@ export default {
     },
   },
   methods: {
+    onImageUploaded(event) {
+      this.createImage(event);
+    },
+    createImage(data) {
+      // ファイルを読み取る
+      const render = new FileReader();
+
+      // undefinedでない時にデータを読み込む
+      if (!(data == undefined)) {
+        // FileData読み込む
+        render.readAsDataURL(data);
+
+        // readAdDataURLが完了したあと実行される処理
+        render.onload = () => {
+          // ファイルの内容を格納
+          this.items.item_img = render.result;
+        }
+      }
+    },
     // Promissが帰ってくるまで、商品一覧に遷移しない処理
     async updateItem() {
-      await axios.patch(`/items/${this.$route.params.id}/update_item/`, {
+      await axios.patch(`/item_detail/${this.$route.params.id}/`, {
         // オブジェクトを送る
         item_id: this.items.item_id,
         item_name: this.items.item_name,
@@ -154,7 +174,7 @@ export default {
       .then(response => {
         console.log(response.data);
         // 商品一覧（オーナーのみ）に遷移する
-        this.$router.push('/item_detail/')
+        this.$router.push({ name: 'item_detail', query: { page: this.$store.getters.store_id }});
       })
       .catch(error => {
         console.log(error);

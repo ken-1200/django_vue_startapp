@@ -14,6 +14,8 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.exceptions import APIException
 from django.core import serializers
 from django.http import HttpResponse
+from api.authentication import UserAuthentication
+from api.permission import PaymentPermission
 
 # swagger対応
 from drf_yasg.utils import swagger_auto_schema
@@ -31,10 +33,30 @@ class NotFound(APIException):
 
 # ModelViewSet
 class PaymentViewSet(viewsets.ModelViewSet):
-  # パーミッション解除
-  permission_classes = ()
+  # 認証/権限
+  authentication_classes = [UserAuthentication,]
+  permission_classes = (PaymentPermission,)
   queryset = Payment.objects.all()
   serializer_class = PaymentSerializer
+
+  # ユーザーidに紐づいた購入情報を取得する
+  @action(detail=False, methods=['get'])
+  def get_payment_info(self, request):
+    try:
+      # Userに紐づいた購入情報
+      payment = Payment.objects.order_by('-bought_at').filter(user_email=request.user)
+      payment_info = serializers.serialize('json', payment)
+    except Exception as err:
+      # システム終了以外の全ての組み込み例外
+      print(err)
+      raise NotFound({
+        'NOT_FOUND': [
+          NotFound().status_code,
+          NotFound().default_detail,
+        ]
+      })
+    return HttpResponse(content=payment_info, content_type="application/json", status=200)
+
 
   @action(detail=True, methods=['get'])
   def get_payments(self, request, pk=None):

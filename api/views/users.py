@@ -85,8 +85,8 @@ class UserRefreshToken(APIView):
     user = User.objects.get(id=token.user_id)
 
     # リフレッシュトークンを使ってアクセストークンのアクセス日時を更新する
-    token.created = timezone.now()
-    print('アクセストークンの生成時間を最新に更新しました。')
+    UserAuthentication.update_token(token)
+    print('refreshtokenでアクセストークンの生成時間を最新に更新しました。')
 
     response = {
       'user_id': token.user_id,

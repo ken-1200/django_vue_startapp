@@ -16,6 +16,7 @@ from django.core import serializers
 from django.http import HttpResponse
 from api.authentication import UserAuthentication
 from api.permission import PaymentPermission
+import json
 
 # swagger対応
 from drf_yasg.utils import swagger_auto_schema
@@ -60,23 +61,47 @@ class PaymentViewSet(viewsets.ModelViewSet):
 
   @action(detail=True, methods=['get'])
   def get_payments(self, request, pk=None):
-    # pay_idに紐づく購入情報を取得する
+    # pay_idに紐づく購入情報を取得
     try:
-      pay_obj = Payment.objects.filter(pk=pk).first()
-      role_obj = Role.objects.filter(pay_id_id=pay_obj.id)
+      # pkに紐づく購入情報を取得
+      pay_obj = Payment.objects.order_by('-bought_at').filter(pk=pk).first()
+
+      # 購入情報に紐づく購入品詳細を取得
+      role_obj = Role.objects.order_by('-pay_id').filter(pay_id_id=pay_obj.id)
+
+      # 購入品詳細をリストで格納
       role_list = []
+
+      # 購入数をリストで格納
+      item_quantity = []
+
+      # 購入品詳細を取得
       for role in role_obj:
+        # item_idに紐づく商品情報
+        item_obj = Item.objects.filter(pk=role.item_id_id)
+        item = serializers.serialize('json', item_obj)
+        # json→辞書/リスト
+        payment_item = json.loads(item)
+
+        # 内容
         role_fields = {
           'pay_id': role.pay_id_id,
           'item_id': role.item_id_id,
+          'item': payment_item,
           'item_quantity': role.item_quantity,
         }
+        # 購入数（合計）
+        item_quantity.append(role.item_quantity)
+
+        # 購入品詳細追加する
         role_list.append(role_fields)
+
     # ResponseBody
       content = {
         'pay_id': pay_obj.id,
         'role': role_list,
         'pay_totalprice': pay_obj.pay_totalprice,
+        'pay_totalquantity': sum(item_quantity),
         'user_email': pay_obj.user_email,
         'bought_at': pay_obj.bought_at
       }

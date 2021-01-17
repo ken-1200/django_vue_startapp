@@ -1,5 +1,6 @@
 <template>
   <div id="app">
+    <!-- ユーザーログインフォーム -->
     <v-form
       ref="form"
       v-model="valid"
@@ -74,7 +75,7 @@ export default {
       // login画面に遷移
       this.$router.push('/user_register');
     },
-  }
+  },
 }
 </script>
 

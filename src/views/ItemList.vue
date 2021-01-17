@@ -161,7 +161,8 @@ export default {
 
       // 画像がないものはこっち
       if (el.fields.item_img == "") {
-        el.fields.item_img = "http://localhost:8001/media/image/sample_image.jpg";
+        // サンプル
+        el.fields.item_img = "http://localhost:8001/media/image/sample.jpg";
       } else {
         // 画像あり
         el.fields.item_img = "http://localhost:8001/media/" + el.fields.item_img;

@@ -2,7 +2,6 @@
   <div id="app">
     <!-- 商品一覧 -->
     <v-container fluid>
-
       <v-layout wrap row>
         <v-flex cols=12 md=3 xl=4>
           <v-carousel
@@ -37,6 +36,7 @@
             name="fade"
             tag="div"
             class="row row--dense"
+            @beforeEnter="beforeEnter"
           >
             <v-col
               v-for="(item, index) in items"
@@ -73,22 +73,21 @@
                 </v-img>
 
                 <!-- タイトル/サブタイトル -->
-                <v-card-title
-                  v-text="item.fields.item_name"
-                ></v-card-title>
-                <v-card-subtitle
-                  v-text="item.fields.item_detail"
-                ></v-card-subtitle>
-
+                <v-list-item three-line>
+                  <v-list-item-content>
+                    <v-list-item-title
+                      v-text="item.fields.item_name"
+                    ></v-list-item-title>
+                    <v-list-item-subtitle
+                      v-text="item.fields.item_detail"
+                    >
+                    </v-list-item-subtitle>
+                  </v-list-item-content>
+                </v-list-item>
                 <v-card-actions>
                   <v-spacer></v-spacer>
-                  <v-btn icon>
-                    <v-icon x-small>{{ item.fields.item_price }}円</v-icon>
-                  </v-btn>
-
-                  <v-btn icon>
-                    <v-icon x-small>{{ item.fields.item_total }}個</v-icon>
-                  </v-btn>
+                  <v-icon x-small>{{ item.fields.item_price }}</v-icon>
+                  <v-icon x-small style="margin-left: 5px">{{ item.fields.item_total }}</v-icon>
                 </v-card-actions>
               </v-card>
             </v-col>
@@ -139,6 +138,10 @@ export default {
     itemDetail(item_id) {
       this.$router.push(`/items/${item_id}`);
     },
+    beforeEnter() {
+      // 一番上のルートにアクセス
+      this.$root.$emit('triggerScroll');
+    },
   },
   computed: {
     isErrored() {
@@ -151,30 +154,34 @@ export default {
     this.items = this.$store.getters.allItemListData;
 
     this.items.forEach(el => {
-      // 商品詳細を格納
-      const text = el.fields.item_detail;
-      
-      if (!(text.length <= 100)) {
-        // 75文字以上の文章は75字以降に...をつける
-        el.fields.item_detail = text.substring(0, 74) + "...";
-      }
-
-      // 画像がないものはこっち
+      // 画像なし
       if (el.fields.item_img == "") {
         // サンプル
-        el.fields.item_img = "http://localhost:8001/media/image/sample.jpg";
+        el.fields.item_img = "http://localhost:8001/media/image/sampleImage.jpg";
       } else {
         // 画像あり
         el.fields.item_img = "http://localhost:8001/media/" + el.fields.item_img;
       }
+
+      // 在庫表示判定
+      if (el.fields.item_total == 0) {
+        // 売り切れ
+        el.fields.item_total = "";
+        el.fields.item_price = "sold out";
+      } else {
+        // 在庫あり
+        el.fields.item_total = el.fields.item_total + "個";
+        el.fields.item_price = el.fields.item_price + "円";
+      }
     });
 
-    this.error = this.$store.getters.error;
+    // エラー
+    this.error = this.$store.getters.errorInfo;
 
     // エラー表示
     if (this.items.length != 0) {
       // エラー内容表示(ex)Notfound..)
-      this.error = this.$store.getters.error;
+      this.error = this.$store.getters.errorInfo;
     } else {
       // 商品がない時(0個返却された)
       this.error = ' 商品がありません。';
@@ -204,12 +211,13 @@ export default {
   /* 現れる時の最後の状態, 消える時の最初の状態 */
   opacity: 1;
 }
-
-.v-btn--icon.v-size--default {
-  height: 36px;
-  width: 32px;
+.v-card__actions {
+  align-items: center;
+  display: flex;
+  padding: 8px;
+  margin-right: 5px;
 }
-.v-card {
+.v-list-item {
   &__title {
     align-items: center;
     text-align: left;
@@ -224,7 +232,6 @@ export default {
 
   &__subtitle {
     text-align: left;
-    padding: 16px;
     font-size: .669rem;
     font-weight: 400;
     line-height: 1.375rem;

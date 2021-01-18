@@ -14,6 +14,7 @@
             name="fade"
             tag="div"
             class="row row--dense"
+            @beforeEnter="beforeEnter"
           >
             <v-col
               v-for="(item, index) in detailItems"
@@ -66,9 +67,30 @@
                   <v-btn icon>
                     <v-icon x-small>{{ item.fields.item_total }}個</v-icon>
                   </v-btn>
-                  <v-btn icon @click.stop="itemDelete(item.pk)">
-                    <v-icon x-small>削除</v-icon>
-                  </v-btn>
+                  <v-menu
+                    bottom
+                    offset-y
+                  >
+                    <template v-slot:activator="{ on, attrs }">
+                      <v-icon
+                        class="mr-2"
+                        x-small
+                        v-bind="attrs"
+                        v-on="on"
+                      >
+                        削除
+                      </v-icon>
+                    </template>
+                    <v-list>
+                      <v-list-item
+                        v-for="(dialog, i) in dialogTitle"
+                        :key="i"
+                        @click="clickMenu(i, item.pk)"
+                      >
+                        <v-list-item-title>{{ dialog.title }}</v-list-item-title>
+                      </v-list-item>
+                    </v-list>
+                  </v-menu>
                 </v-card-actions>
               </v-card>
             </v-col>
@@ -88,6 +110,14 @@ export default {
       detailItems: [],
       error: null,
       blobUrl: "",
+      dialogTitle: [
+        {
+          title: 'キャンセル',
+        },
+        {
+          title: 'OK',
+        },
+      ]
     }
   },
   computed: {
@@ -102,6 +132,18 @@ export default {
     },
   },
   methods: {
+    clickMenu(index, item_id) {
+      switch (index) {
+        case 0:
+          "() => {}"
+          break;
+        case 1:
+          this.itemDelete(item_id);
+          break;
+        default:
+          "() => {}"
+      }
+    },
     itemEdit(item_id) {
       this.$router.push(`/item_detail/edit/${item_id}`);
     },
@@ -115,8 +157,17 @@ export default {
       })
       .catch(error => {
         console.log(error);
-        this.error = error;
+        // ステータス400返却時
+        if (error.response.status == 400) {
+          window.alert(error.message);
+        } else {
+          window.alert(error.message);
+        }
       });
+    },
+    beforeEnter() {
+      // 一番上のルートにアクセス
+      this.$root.$emit('triggerScroll');
     },
   },
   // 非同期
@@ -130,22 +181,23 @@ export default {
       // 画像がないものはこっち
       if (el.fields.item_img == "") {
         // サンプル
-        el.fields.item_img = "http://localhost:8001/media/image/sample.jpg";
+        el.fields.item_img = "http://localhost:8001/media/image/sampleImage.jpg";
       } else {
         // 画像あり
         el.fields.item_img = "http://localhost:8001/media/" + el.fields.item_img;
       }
     });
 
-    this.error = this.$store.getters.error;
+    // エラー情報取得
+    this.error = this.$store.getters.errorInfo;
 
     // エラー表示
     if (this.detailItems.length != 0) {
       // エラー内容表示(ex)Notfound..)
-      this.error = this.$store.getters.error;
+      this.error = this.$store.getters.errorInfo;
     } else {
       // 商品がない時(0個返却された)
-      this.error = ' 商品がありません。';
+      this.error = ' 商品がありません。新しい商品を登録しましょう。';
     }
   },
 }

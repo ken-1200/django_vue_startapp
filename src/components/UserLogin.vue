@@ -1,5 +1,18 @@
 <template>
   <div id="app">
+    <!-- アラート -->
+    <v-alert
+      prominent
+      type="error"
+      :value="alert"
+    >
+      <v-row align="center">
+        <v-col class="grow">
+          {{ errorInfo }}
+        </v-col>
+      </v-row>
+    </v-alert>
+
     <!-- ユーザーログインフォーム -->
     <v-form
       ref="form"
@@ -68,6 +81,11 @@ export default {
         user_email: this.email,
         password: this.password,
       });
+
+      // エラーの処理
+      this.onError();
+
+      // リセット
       this.email = "";
       this.password = "";
     },

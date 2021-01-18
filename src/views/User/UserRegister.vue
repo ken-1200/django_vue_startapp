@@ -2,7 +2,7 @@
   <div id="app">
     <v-container style="height: 1000px;">
       <v-card-title>Welcome to Sign up Page!</v-card-title>
-      <v-card-subtitle>こちらから新規登録してください</v-card-subtitle>
+      <v-card-subtitle>こちらからユーザーとして新規登録してください</v-card-subtitle>
       <UserRegisterForm/>
     </v-container>
   </div>

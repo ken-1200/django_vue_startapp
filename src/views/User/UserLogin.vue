@@ -5,7 +5,7 @@
     <template v-if="!isAuthenticatedUser">
       <v-container style="height: 1000px;">
         <v-card-title>Welcome to Sign in Page!</v-card-title>
-        <v-card-subtitle>こちらからログインしてください</v-card-subtitle>
+        <v-card-subtitle>こちらからユーザーとしてログインしてください</v-card-subtitle>
         <UserLogin/>
       </v-container>
     </template>

@@ -21,13 +21,13 @@
         to="/"
         class="toolbar__link"
       >
-        Kimono
+        FURISODE
       </router-link>
-      <span
+      <!-- <span
         class="toolbar__style"
       >
         STYLE
-      </span>
+      </span> -->
     </v-toolbar-title>
 
     <v-spacer></v-spacer>

@@ -1,5 +1,19 @@
 <template>
   <div id="app">
+    <!-- アラート -->
+    <v-alert
+      prominent
+      type="error"
+      :value="alert"
+    >
+      <v-row align="center">
+        <v-col class="grow">
+          {{ errorInfo }}
+        </v-col>
+      </v-row>
+    </v-alert>
+
+    <!-- ユーザーログインフォーム -->
     <v-form
       ref="form"
       v-model="valid"
@@ -67,6 +81,11 @@ export default {
         user_email: this.email,
         password: this.password,
       });
+
+      // エラーの処理
+      this.onError();
+
+      // リセット
       this.email = "";
       this.password = "";
     },
@@ -74,6 +93,15 @@ export default {
       // login画面に遷移
       this.$router.push('/user_register');
     },
-  }
+  },
 }
 </script>
+
+<style lang="scss" scoped>
+.v-btn {
+  height: 36px;
+  min-width: 64px;
+  padding: 0 16px;
+  margin-top: 10px;
+}
+</style>

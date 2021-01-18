@@ -23,3 +23,15 @@ class CustomStorePermission(permissions.BasePermission):
   def has_permission(self, request, view):
     print('ストアユーザー情報返却しました。')
     return super().has_permission(request, view)
+
+# Payment権限
+class PaymentPermission(permissions.BasePermission):
+  def has_permission(self, request, view):
+    print('認証されました。')
+    return super().has_permission(request, view)
+
+# User権限
+class CustomUserPermission(permissions.BasePermission):
+  def has_permission(self, request, view):
+    print('ユーザー情報返却しました。')
+    return super().has_permission(request, view)

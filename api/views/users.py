@@ -17,6 +17,8 @@ from api.serializers.user_login import UserLoginSerializer
 from rest_framework import authentication, permissions, generics
 from django.http import HttpResponse, Http404
 from api.serializers.user_refresh_token import UserRefreshTokenSerializer
+from api.authentication import UserAuthentication
+from api.permission import CustomUserPermission
 
 import json
 
@@ -25,30 +27,35 @@ class LoginUserGetView(generics.GenericAPIView):
   """
   ログインしている状態で自分自身の情報を取得する
   """
-  authentication_classes = []
-  permissions_classes = (permissions.IsAuthenticated,)
+  # 認証/権限
+  authentication_classes = [UserAuthentication,]
+  permission_classes = (CustomUserPermission,)
   queryset = User.objects.all()
   serializer_class = UserSerializer
 
   def get(self, request, format=None):
-    return Response(data={
-      'user_name': request.user_name,
-      'user_email': request.user_email,
-    }, status=status.HTTP_200_OK)
+    content = {
+      'user_name': request.user.user_name,
+      'user_email': request.user.user_email,
+    }
+    return Response(data=content, status=status.HTTP_200_OK)
 
 # アップデート専用(ログインしているユーザー)
 class UserUpdateView(generics.UpdateAPIView):
   """
   ログインしている状態で自分自身の情報をupdateする
   """
-  authentication_classes = []
-  permissions_classes = (permissions.IsAuthenticated,)
+  # 認証/権限
+  authentication_classes = [UserAuthentication,]
+  permission_classes = (CustomUserPermission,)
   queryset = User.objects.all()
   serializer_class = UserSerializer
   # 検索キーの指定(デフォルトはid)
   lookup_fields = 'user_email'
 
   def get_object(self):
+    # まずここが読み込まれる 
+    # 認証、権限のえられたストアユーザーが入ってきて、その情報をinstanceとして返却
     try:
       instance = self.queryset.get(user_email=self.request.user)
       print(instance)
@@ -78,8 +85,8 @@ class UserRefreshToken(APIView):
     user = User.objects.get(id=token.user_id)
 
     # リフレッシュトークンを使ってアクセストークンのアクセス日時を更新する
-    token.created = timezone.now()
-    print('アクセストークンの生成時間を最新に更新しました。')
+    UserAuthentication.update_token(token)
+    print('refreshtokenでアクセストークンの生成時間を最新に更新しました。')
 
     response = {
       'user_id': token.user_id,

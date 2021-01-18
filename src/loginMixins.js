@@ -1,6 +1,8 @@
 export const loginMixins = {
   data() {
     return {
+      error: "",
+      alert: false,
       email: "",
       password: "",
       valid: true,
@@ -16,6 +18,25 @@ export const loginMixins = {
     }
   },
   methods: {
+    onError() {
+      // エラー内容を変数に格納
+      this.error = this.$store.getters.errorInfo;
+
+      // アラート判定
+      if (this.error) {
+        this.alert = true;
+
+        // 5s後にリセット
+        setTimeout(() => {
+          this.reset();
+        }, 3600);
+      } else {
+        this.alert = false;
+      }
+
+      // エラー内容リセット
+      this.$store.dispatch('setError', null);
+    },
     // ボタン
     validate() {
       // 空文字の場合
@@ -28,6 +49,15 @@ export const loginMixins = {
     reset() {
       // リセット、エラー文字を削除
       this.$refs.form.reset();
+
+      // アラートリセット
+      this.alert = false;
+      this.error = "";
+    },
+  },
+  computed: {
+    errorInfo() {
+      return this.error;
     },
   },
 }

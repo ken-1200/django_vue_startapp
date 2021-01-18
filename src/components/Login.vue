@@ -1,5 +1,19 @@
 <template>
   <div id="app">
+    <!-- アラート -->
+    <v-alert
+      prominent
+      type="error"
+      :value="alert"
+    >
+      <v-row align="center">
+        <v-col class="grow">
+          {{ errorInfo }}
+        </v-col>
+      </v-row>
+    </v-alert>
+
+    <!-- ストアログインフォーム -->
     <v-form
       ref="form"
       v-model="valid"
@@ -67,6 +81,11 @@ export default {
         store_email: this.email,
         store_password: this.password,
       });
+
+      // エラーの処理
+      this.onError();
+
+      // リセット
       this.email = "";
       this.password = "";
     },
@@ -77,3 +96,12 @@ export default {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+.v-btn {
+  height: 36px;
+  min-width: 64px;
+  padding: 0 16px;
+  margin-top: 10px;
+}
+</style>

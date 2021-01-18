@@ -17,7 +17,7 @@ export default new Vuex.Store({
     addToCart: [],
     itemInfo: [],
     paymentInfo: [],
-    error: null,
+    errorInfo: null,
   },
   getters: {
     access_token: state => state.access_token,
@@ -33,7 +33,7 @@ export default new Vuex.Store({
     addToCart: state => state.addToCart,
     itemInfo: state => state.itemInfo,
     paymentInfo: state => state.paymentInfo,
-    error: state => state.error,
+    errorInfo: state => state.errorInfo,
   },
   mutations: {
     // トークン
@@ -89,7 +89,10 @@ export default new Vuex.Store({
     // 支払い情報取得
     getPaymentInfo(state, paymentInfo) {
       state.paymentInfo = paymentInfo;
-    }
+    },
+    setErrorInfo(state, errorInfo) {
+      state.errorInfo = errorInfo;
+    },
   },
   actions: {
     // オートログイン
@@ -170,14 +173,20 @@ export default new Vuex.Store({
 
         if (this.getters.addToCart.length != 0) {
           // カートに商品が入っている場合は支払い確認画面
-          router.push(`/order/cart/kinomo/${id}`);
+          router.push(`/order/cart/furisode/${id}`);
         } else {
           // 商品一覧画面
           router.push('/user_home');
         }
       })
       .catch(error => {
-        console.log(error);
+        // ステータス400返却時
+        if (error.response.status == 400) {
+          window.alert(error.message);
+        }
+
+        // エラー内容を格納
+        dispatch('setError', error.response.data.message);
       });
     },
     // トークンをリフレッシュする為の関数
@@ -196,7 +205,16 @@ export default new Vuex.Store({
           access_token: response.data.data.access_token,
           refresh_token: response.data.data.refresh_token,
           expires_in: response.data.data.expires_in,
-        });
+        })
+        .catch(error => {
+          // ステータス400返却時
+          if (error.response.status == 400) {
+            window.alert(error.message);
+          }
+
+          // エラー内容を格納
+          dispatch('setError', error.response.data.message);
+        })
       });
     },
     // ローカルストレージにアクセストークンと有効期限時間とリフレッシュトークンを保存し、１時間おきにトークンを更新する
@@ -255,6 +273,42 @@ export default new Vuex.Store({
       // DashBoardに遷移する
       router.push('/');
     },
+    // 退会
+    user_withDrawal({ commit, dispatch }, id) {
+      axios.delete(`/users/${id}/delete_user/`)
+      .then(response => {
+        console.log(response);
+      })
+      .catch(error => {
+        // ステータス400返却時
+        if (error.response.status == 400) {
+          window.alert(error.message);
+        }
+
+        // エラー内容を格納
+        dispatch('setError', error.response.data.message);
+      });
+
+      // AccessTokenを削除
+      commit('updateUserAccessToken', null);
+
+      // userIdを削除
+      commit('updateUserId', null);
+
+      // ユーザー情報を削除
+      commit('getUserInfo', null);
+
+      // ローカルストレージから各アイテムを削除
+      localStorage.removeItem('userName');
+      localStorage.removeItem('userEmail');
+      localStorage.removeItem('userId');
+      localStorage.removeItem('userRefreshAccessToken');
+      localStorage.removeItem('userRefreshToken');
+      localStorage.removeItem('userExpiryTimeMs');
+
+      // DashBoardに遷移する
+      router.push('/');
+    },
     // 商品リスト取得
     async getItemList({ commit }) {
       await axios.get('/all/items_list/')
@@ -265,7 +319,7 @@ export default new Vuex.Store({
       })
       .catch(error => {
         // エラー処理
-        this.getters.error = `商品が見つかりませんでした。${error}`;
+        this.getters.errorInfo = `商品が見つかりませんでした。${error}`;
         console.log(error);
       })
     },
@@ -285,7 +339,7 @@ export default new Vuex.Store({
         commit('getItemInfo', itemData);
 
         // ページ遷移
-        router.push('/order/cart/kinomo');
+        router.push('/order/cart/furisode');
       } else {
         // アラートを表示
         itemData.alert = true;
@@ -312,10 +366,33 @@ export default new Vuex.Store({
     deleteCartInfo({ commit }, id) {
       commit('deleteCartInfo', id);
     },
-    // 購入する
-    // payment() {
-      
-    // }
+    // 購入情報を格納
+    async getPaymentInfo({ commit, dispatch }) {
+      await axios.get('/payments/get_payment_info/', {
+        // 第二引数にヘッダー
+        headers: {
+          Authorization: `Bearer ${this.getters.user_access_token}`
+        }
+      })
+      .then(response => {
+        console.log(response.data);
+        // 購入情報をコミット
+        commit('getPaymentInfo', response.data);
+      })
+      .catch(error => {
+        // ステータス400返却時
+        if (error.response.status == 400) {
+          window.alert(error.message);
+        }
+
+        // エラー内容を格納
+        dispatch('setError', error.response.data.message);
+      });
+    },
+    // エラー処理共通化
+    setError({ commit }, data) {
+      commit('setErrorInfo', data);
+    },
 
 /* ストア側の処理
   - 商品取得
@@ -329,7 +406,7 @@ export default new Vuex.Store({
     // 商品取得
     async getItem({ commit }) {
       await axios.get(`/items/get_item_detail/?page=${this.getters.store_id}`, {
-        // 第二引数にヘッダー //ユーザー側の認証もしくは、認証しない状態でのアクセス可能なエンドポイントに変更 
+        // 第二引数にヘッダー
         headers: {
           Authorization: `Bearer ${this.getters.access_token}`
         }
@@ -341,7 +418,7 @@ export default new Vuex.Store({
       })
       .catch(error => {
         // エラー処理
-        this.getters.error = `商品が見つかりませんでした。${error}`;
+        this.getters.errorInfo = `商品が見つかりませんでした。${error}`;
         console.log(error);
       });
     },
@@ -407,9 +484,13 @@ export default new Vuex.Store({
         router.push('/store_home');
       })
       .catch(error => {
-        // ここもう少し改善余地あり1/3
-        console.log(error);
-        router.push('/store_register');
+        // ステータス400返却時
+        if (error.response.status == 400) {
+          window.alert(error.message);
+        }
+
+        // エラー内容を格納
+        dispatch('setError', error.response.data.message);
       });
     },
     // ログアウト

@@ -21,13 +21,13 @@
         to="/"
         class="toolbar__link"
       >
-        Kimono
+        FURISODE
       </router-link>
-      <span
+      <!-- <span
         class="toolbar__style"
       >
         STYLE
-      </span>
+      </span> -->
     </v-toolbar-title>
 
     <v-spacer></v-spacer>
@@ -51,7 +51,7 @@
         <v-list-item
           v-for="(item, i) in items"
           :key="i"
-          @click="clickMenu(i)"
+          @click.stop="clickMenu(i)"
         >
           <v-list-item-title>
             <v-row
@@ -106,8 +106,8 @@ export default {
   data() {
     return {
       items: [
-        { title: '新規会員登録'},
-        { title: 'ログイン' },
+        { title: 'ショップオーナー'},
+        { title: 'ユーザーログイン' },
       ],
     }
   },
@@ -115,7 +115,7 @@ export default {
     clickMenu(index) {
       switch (index) {
         case 0:
-          this.$router.push('/user_register');
+          this.$router.push('/store_login');
           break;
         case 1:
           this.$router.push('/user_login');
@@ -147,11 +147,6 @@ export default {
     font-weight: 400;
     font-size: 1.7rem;
     font-family: "YuMincho" !important;
-  }
-
-  &__style {
-    font-size: 12px;
-    color: $cSubBlack;
   }
 }
 .tabs {

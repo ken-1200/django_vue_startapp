@@ -14,6 +14,7 @@ const ItemCart = () => import(/* webpackChunkName: "ItemCart" */"./views/ItemCar
 const ItemCartOrder = () => import(/* webpackChunkName: "ItemCartOrder" */"./views/ItemCartOrder.vue");
 const PaymentConfirmed = () => import(/* webpackChunkName: "PaymentConfirmed" */"./views/PaymentConfirmed.vue");
 const StoreHomePage = () => import(/* webpackChunkName: "StoreHomePage" */"./views/StoreHomePage.vue");
+const OrderHistory = () => import(/* webpackChunkName: "OrderHistory" */"./views/OrderHistory.vue");
 
 const UserRegister = () => import(/* webpackChunkName: "UserRegister" */"./views/User/UserRegister.vue");
 const UserLogin = () => import(/* webpackChunkName: "UserLogin" */"./views/User/UserLogin.vue");
@@ -32,24 +33,24 @@ export default new Router({
     {
       path: '/store_register',
       component: StoreRegister,
-      beforeEnter(to, from, next) {
-        if (store.getters.access_token) {//access_tokenがある場合は登録せず、ダッシュボード画面へ
-          next('/');
-        } else {
-          next();
-        }
-      }
+      // beforeEnter(to, from, next) {
+      //   if (store.getters.access_token) {//access_tokenがある場合は登録せず、ダッシュボード画面へ
+      //     next('/');
+      //   } else {
+      //     next();
+      //   }
+      // }
     },
     {
       path: '/store_login',
       component: StoreLogin,
-      beforeEnter(to, from, next) {
-        if (store.getters.access_token) {//access_tokenがある場合はログインぜず、ダッシュボード画面へ
-          next('/');
-        } else {
-          next();
-        }
-      }
+      // beforeEnter(to, from, next) {
+      //   if (store.getters.access_token) {//access_tokenがある場合はログインぜず、ダッシュボード画面へ
+      //     next('/');
+      //   } else {
+      //     next();
+      //   }
+      // }
     },
     {
       path: '/store_home',
@@ -104,39 +105,81 @@ export default new Router({
     {
       path: '/user_home',
       component: UserHomePage,
+      beforeEnter(to, from, next) {
+        if (store.getters.user_access_token) { // ユーザートークンがない場合は、ダッシュボードへ
+          next();
+        } else {
+          next('/');
+        }
+      }
     },
     {
       path: '/items/:id',
       component: ItemDetail,
     },
     {
-      path: '/order/cart/kinomo',
+      path: '/order/cart/furisode',
       component: ItemCart,
     },
     {
-      path: '/order/cart/kinomo/:id',
+      path: '/order/cart/furisode/:id',
       component: ItemCartOrder,
+      beforeEnter(to, from, next) {
+        if (store.getters.user_access_token) { // ユーザートークンがない場合は、ダッシュボードへ
+          next();
+        } else {
+          next('/');
+        }
+      }
     },
     {
       path: '/payment',
       component: PaymentConfirmed,
+      beforeEnter(to, from, next) {
+        if (store.getters.user_access_token) { // ユーザートークンがない場合は、ダッシュボードへ
+          next();
+        } else {
+          next('/');
+        }
+      }
     },
-    // {
-    //   path: '/item_page',
-    //   component: Home
-    // },
-    // {
-    //   path: '/item_cart',
-    //   component: Home
-    // },
-    // {
-    //   path: '/payment',
-    //   component: Home
-    // },
     {
-      // 定義されていないパスへの対応。トップページへリダイレクトする。
+      path: '/member/order/history',
+      component: OrderHistory,
+      beforeEnter(to, from, next) {
+        if (store.getters.user_access_token) { // ユーザートークンがない場合は、ダッシュボードへ
+          next();
+        } else {
+          next('/');
+        }
+      }
+    },
+    {
+      // 定義されていないパスへの対応
       path: '*',
-      redirect: '/'
+      beforeEnter(to, from, next) {
+        if (store.getters.access_token) { // ストアのトークンがある場合は、ストアホームへ
+          next('/store_home');
+        } else if (store.getters.user_access_token) { // ユーザーのトークンがある場合は、ユーザーホームへ
+          next('/user_home');
+        } else { // それ以外はダッシュボード画面へ
+          next('/');
+        }
+      }
     }
-  ]
-})
+  ],
+  scrollBehavior (to, from, savedPosition) {
+    // スクロール位置を記憶している場合はその位置を返す
+    if (savedPosition) {
+      return new Promise((resolve) => {
+        // トランジションあり
+        this.app.$root.$once('triggerScroll', () => {
+          resolve(savedPosition);
+        });
+      });
+    } else {
+      // それ以外は、先頭の位置を返す
+      return { x: 0, y: 0 };
+    }
+  }
+});

@@ -36,13 +36,18 @@ class ItemList(generics.ListCreateAPIView):
 # 単一のモデルインスタンスを表すための読み取り-書き込み-削除エンドポイントに使用
 class ItemDetail(generics.RetrieveUpdateDestroyAPIView):
   """
-  アイテム GET(pk指定), PUT, PATCH, DELETE(レコード削除)
+  アイテム GET(pk指定), PUT, PATCH(item_idに紐づく商品を更新する), DELETE(レコード削除)
   """
   queryset = Item.objects.all()
   serializer_class = ItemSerializer
   authentication_classes = [CustomAuthentication,]
   # 編集や削除は作成者のみが行える
   permission_classes = [CustomItemPermission, ]
+
+  # 編集メソッド
+  def patch(self, request, *args, **kwargs):
+    print('認証されたユーザーで商品を編集します。')
+    return self.partial_update(request, *args, **kwargs)
 
 # APIException
 class NotFound(APIException):
@@ -53,7 +58,7 @@ class NotFound(APIException):
 # ItemViewSetの作成
 class ItemViewSet(viewsets.ModelViewSet):
   """
-  アイテム GET(ストアオーナーに紐づいた除された商品以外一覧), アイテム GET(削除された商品以外全ての一覧), PATCH(item_idに紐づく商品を更新する), DELETEなし
+  アイテム GET(ストアオーナーに紐づいた除された商品以外一覧), アイテム GET(削除された商品以外全ての一覧), DELETEなし
   """
   # パーミッション設定
   # authentication_classesで使用する認証クラスを指定
@@ -82,60 +87,6 @@ class ItemViewSet(viewsets.ModelViewSet):
       })
     return HttpResponse(content=item_list, content_type="application/json", status=200)
 
-# 商品を編集（更新）する
-  @action(detail=True, methods=['patch'])
-  def update_item(self, request, pk=None):
-    # 商品がある場合商品を更新する
-    if not Item.objects.filter(store_owner=request.user.id):
-      # オーナーの商品がない場合
-      return Response({'message': 'あなたの商品が存在しません。'}, status=403)
-
-    # リクエストデータを取得する
-    try:
-      ob = request.data
-      item_id = ob['item_id']
-      item_name = ob['item_name']
-      item_detail = ob['item_detail']
-      item_price = ob['item_price']
-      item_total = ob['item_total']
-      item_img = ob['item_img']
-    except:
-      return Response({'message': '読み込みに失敗しました。'}, status=400)
-
-    try:
-      # 商品アップデート
-      item_obj = self.queryset.get(pk=ob['item_id'])
-      item_obj.id = item_id
-      item_obj.item_name = item_name
-      item_obj.item_img = item_img
-      item_obj.item_detail = item_detail
-      item_obj.item_price = item_price
-      item_obj.item_total = item_total
-      item_obj.updated_at = timezone.now()
-      item_obj.deleted_at = None
-      item_obj.save()
-
-      # レスポンスデータ
-      content = {
-        'item_id': item_obj.id,
-        'item_name': item_obj.item_name,
-        'item_detail': item_obj.item_detail,
-        'item_price': item_obj.item_price,
-        'item_total': item_obj.item_total,
-        'updated_at': item_obj.updated_at,
-        'item_img': '{item_obj.item_img}'.format(item_obj=item_obj),
-      }
-
-    except Exception as err:
-      # システム終了以外の全ての組み込み例外
-      print(err)
-      raise NotFound({
-        'NOT_FOUND': [
-          NotFound().status_code,
-          NotFound().default_detail,
-        ]
-      })
-    return Response({'message': 'Success', 'data': content, 'status': 201})
 
 # 商品一覧 ユーザーストア共に見れる商品一覧
 class AllItemViewSet(viewsets.ModelViewSet):

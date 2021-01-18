@@ -1,92 +1,108 @@
 <template>
   <div id="app">
-    <!-- 商品詳細 -->
-    <v-card-title>商品を編集する</v-card-title>
-    <v-card-subtitle>あなたの商品をここで編集しましょう</v-card-subtitle>
+    <v-container fluid style="height: 1200px">
+      <!-- 商品詳細 -->
+      <v-card-title id="titleInfo__title">商品を編集する</v-card-title>
+      <v-card-subtitle id="titleInfo__subtitle">あなたの商品をここで編集しましょう</v-card-subtitle>
 
-    <!-- エラー -->
-    <p v-if="isErrored">{{ error }}</p>
+      <!-- エラー -->
+      <template v-if="isErrored">{{ error }}</template>
 
-    <!-- フォーム -->
-    <v-form
-      ref="form"
-      v-model="valid"
-      lazy-validation
-    >
-      <v-text-field
-        v-model="items.item_name"
-        v-bind="items"
-        :counter="30"
-        :rules="nameRules"
-        label="商品名"
-        prepend-icon="mdi-shopping"
-        required
-      ></v-text-field>
-
-      <v-file-input
-        label="写真"
-        filled
-        placeholder="クリックしてください。"
-        prepend-icon="mdi-camera"
-        background-color="#fbfbfb"
-      ></v-file-input>
-
-      <v-textarea
-        v-model="items.item_detail"
-        v-bind="items"
-        :rules="detailRules"
-        hint="詳細は500文字以下である必要があります。"
-        counter
-        label="詳細"
-        prepend-icon="mdi-form-textarea"
-      ></v-textarea>
-
-      <v-text-field
-        v-model.number="items.item_price"
-        v-bind="items"
-        :rules="priceRules"
-        name="input-10-1"
-        label="値段"
-        type="number"
-        max="10000000"
-        min="100"
-        prepend-icon="mdi-currency-jpy"
-        counter
-        required
-      ></v-text-field>
-
-      <v-text-field
-        v-model.number="items.item_total"
-        v-bind="items"
-        :rules="totalRules"
-        name="input-10-1"
-        label="品数"
-        type="number"
-        prepend-icon="mdi-paper-cut-vertical"
-        max="100"
-        min="1"
-        counter
-        required
-      ></v-text-field>
-
-      <v-btn
-        :disabled="!valid"
-        :loading="loading"
-        color="success"
-        class="mr-4"
-        @click="validate"
+      <!-- アラート -->
+      <v-alert
+        prominent
+        type="error"
+        :value="alert"
       >
-        編集ボタン
-      </v-btn>
+        <v-row align="center">
+          <v-col class="grow">
+            商品が登録できませんでした。もう一度やり直してください。
+          </v-col>
+        </v-row>
+      </v-alert>
 
-      <v-btn
-        color="error"
-        class="mr-4"
-        @click="reset"
+      <!-- フォーム -->
+      <v-form
+        ref="form"
+        v-model="valid"
+        lazy-validation
       >
-        リセットボタン
-      </v-btn>
-    </v-form>
+        <v-text-field
+          v-model="items.item_name"
+          v-bind="items"
+          :counter="30"
+          :rules="nameRules"
+          label="商品名"
+          prepend-icon="mdi-shopping"
+          required
+        ></v-text-field>
+
+        <v-file-input
+          @change="onImageUploaded"
+          label="写真"
+          filled
+          placeholder="クリックしてください。"
+          prepend-icon="mdi-camera"
+          background-color="#fbfbfb"
+        ></v-file-input>
+
+        <v-textarea
+          v-model="items.item_detail"
+          v-bind="items"
+          :rules="detailRules"
+          hint="詳細は500文字以下である必要があります。"
+          counter
+          label="詳細"
+          prepend-icon="mdi-form-textarea"
+        ></v-textarea>
+
+        <v-text-field
+          v-model.number="items.item_price"
+          v-bind="items"
+          :rules="priceRules"
+          name="input-10-1"
+          label="値段"
+          type="number"
+          max="10000000"
+          min="100"
+          prepend-icon="mdi-currency-jpy"
+          counter
+          required
+        ></v-text-field>
+
+        <v-text-field
+          v-model.number="items.item_total"
+          v-bind="items"
+          :rules="totalRules"
+          name="input-10-1"
+          label="品数"
+          type="number"
+          prepend-icon="mdi-paper-cut-vertical"
+          max="100"
+          min="1"
+          counter
+          required
+        ></v-text-field>
+
+        <v-btn
+          :disabled="!valid"
+          :loading="loading"
+          color="success"
+          class="mr-4"
+          @click="validate"
+        >
+          編集ボタン
+        </v-btn>
+
+        <v-btn
+          color="error"
+          class="mr-4"
+          @click="reset"
+        >
+          リセットボタン
+        </v-btn>
+      </v-form>
+    </v-container>
   </div>
 </template>
 
@@ -102,9 +118,10 @@ export default {
         item_detail: '',
         item_price: null,
         item_total: null,
-        item_img: '',
+        item_img: "",
       },
-      error: null,
+      alert: false,
+      error: "",
       valid: true,
       loading: false,
       nameRules: [
@@ -136,9 +153,28 @@ export default {
     },
   },
   methods: {
+    onImageUploaded(event) {
+      this.createImage(event);
+    },
+    createImage(data) {
+      // ファイルを読み取る
+      const render = new FileReader();
+
+      // undefinedでない時にデータを読み込む
+      if (!(data == undefined)) {
+        // FileData読み込む
+        render.readAsDataURL(data);
+
+        // readAdDataURLが完了したあと実行される処理
+        render.onload = () => {
+          // ファイルの内容を格納
+          this.items.item_img = render.result;
+        }
+      }
+    },
     // Promissが帰ってくるまで、商品一覧に遷移しない処理
     async updateItem() {
-      await axios.patch(`/items/${this.$route.params.id}/update_item/`, {
+      await axios.patch(`/item_detail/${this.$route.params.id}/`, {
         // オブジェクトを送る
         item_id: this.items.item_id,
         item_name: this.items.item_name,
@@ -154,11 +190,28 @@ export default {
       .then(response => {
         console.log(response.data);
         // 商品一覧（オーナーのみ）に遷移する
-        this.$router.push('/item_detail/')
+        this.$router.push({ name: 'item_detail', query: { page: this.$store.getters.store_id }});
+
+        // 初期化
+        this.init();
       })
       .catch(error => {
-        console.log(error);
-        this.error = error;
+        // ステータス400以外返却時
+        if (!(error.response.status == 400)) {
+          window.alert(error.message);
+        }
+
+        // アラート判定
+        if (error) {
+          this.alert = true;
+
+          // 5s後にリセット
+          setTimeout(() => {
+            this.reset();
+          }, 3600);
+        } else {
+          this.alert = false;
+        }
       });
     },
     // ボタン
@@ -173,6 +226,19 @@ export default {
     reset() {
       // リセット、エラー文字を削除
       this.$refs.form.reset();
+
+      // アラートリセット
+      this.alert = false;
+    },
+    init() {
+      this.items = {
+        item_id: this.$route.params.id,
+        item_name: '',
+        item_detail: '',
+        item_price: null,
+        item_total: null,
+        item_img: "",
+      }
     },
   },
   async created() {
@@ -191,20 +257,58 @@ export default {
         item_detail: el.fields.item_detail,
         item_price: el.fields.item_price,
         item_total: el.fields.item_total,
-        item_img: el.fields.item_img,
+        item_img: "",
       }
     });
 
-    this.error = this.$store.getters.error;
+    // エラー情報
+    this.error = this.$store.getters.errorInfo;
 
     // エラー表示
     if (this.items.length != 0) {
       // エラー内容表示(ex)Notfound..)
-      this.error = this.$store.getters.error;
+      this.error = this.$store.getters.errorInfo;
     } else {
       // 商品がない時(0個返却された)
-      this.error = ' 商品がありません。';
+      this.error = '商品がありません。新しい商品を登録しましょう。';
     }
   },
 }
 </script>
+
+<style lang="scss" scoped>
+.v-card {
+  &__title {
+    align-items: center;
+    text-align: left;
+    display: flex;
+    flex-wrap: wrap;
+    font-size: .701rem;
+    font-weight: 500;
+    letter-spacing: .0125em;
+    line-height: 2rem;
+    word-break: break-all;
+  }
+
+  &__subtitle {
+    text-align: left;
+    padding: 16px;
+    font-size: .669rem;
+    font-weight: 400;
+    line-height: 1.375rem;
+    letter-spacing: .0071428571em;
+  }
+}
+#titleInfo {
+  &__title {
+    font-size: 1.25rem;
+  }
+
+  &__subtitle {
+    font-size: .875rem;
+    font-weight: 400;
+    line-height: 1.375rem;
+    letter-spacing: .0071428571em;
+  }
+}
+</style>

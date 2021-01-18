@@ -23,53 +23,74 @@
 
     <v-container fluid>
       <v-layout wrap row>
-        <v-flex cols=2 md=3 xl=4>
-          <v-img
-            flex
-            contain
-            lazy-src="https://picsum.photos/id/11/10/6"
-            max-height="600"
-            max-width="500"
-            src="https://picsum.photos/id/11/500/600"
-          ></v-img>
-
-          <v-card outlined>
-            <v-card-title>{{ items.item_name }}</v-card-title>
-
-            <v-card-subtitle>¥{{ items.item_price | addComma }}</v-card-subtitle>
-
-            <v-row align="center">
-              <v-col
-                class="d-flex"
-                cols="12"
-                sm="6"
-              >
-                <v-select
-                  v-model="addCart.item_total"
-                  :items="itemQuantity"
-                  :rules="quantityRules"
-                  label="数量"
-                  dense
-                  solo
-                  no-data-text="在庫がありません。"
-                ></v-select>
-              </v-col>
-            </v-row>
-
-            <v-btn
-              min-width="45%"
-              :loading="loading"
-              color="success"
-              class="mr-4"
-              @click="validate"
+        <v-flex cols=12 md=3 xl=4>
+          <v-row class="float-md-left">
+            <v-col
+              cols="auto"
+              sm="auto"
             >
-              カートに入れる
-            </v-btn>
+              <v-img
+                :src="items.item_img"
+                contain
+                max-height="700"
+                max-width="500"
+              >
+                <!-- プログレス -->
+                <template v-slot:placeholder>
+                  <v-row
+                    class="fill-height ma-0"
+                    align="center"
+                    justify="center"
+                  >
+                    <v-progress-circular
+                      indeterminate
+                      color="grey lighten-5"
+                    ></v-progress-circular>
+                  </v-row>
+                </template>
+              </v-img>
+            </v-col>
+          </v-row>
 
-            <v-card-text class="mt-4">
-              {{ items.item_detail }}
-            </v-card-text>
-          </v-card>
+          <!-- 商品内容 -->
+          <v-col
+            class="d-flex"
+            cols="auto"
+          >
+            <v-card
+              width="100%"
+              outlined
+            >
+              <v-card-title>{{ items.item_name }}</v-card-title>
+
+              <v-card-subtitle>¥{{ items.item_price | addComma }}</v-card-subtitle>
+
+              <v-select
+                v-model="addCart.item_total"
+                :items="itemQuantity"
+                :rules="quantityRules"
+                label="数量"
+                dense
+                solo
+                no-data-text="在庫がありません。"
+                style="width: 45%"
+              ></v-select>
+
+              <v-btn
+                min-width="45%"
+                :loading="loading"
+                color="success"
+                class="mr-4"
+                @click="validate"
+              >
+                カートに入れる
+              </v-btn>
+
+              <v-card-text class="mt-4">
+                {{ items.item_detail }}
+              </v-card-text>
+            </v-card>
+          </v-col>
         </v-flex>
       </v-layout>
     </v-container>
@@ -128,7 +149,7 @@ export default {
       this.$store.dispatch('addToCart', this.addCart);
     },
     goToCart() {
-      this.$router.push('/order/cart/kinomo');
+      this.$router.push('/order/cart/furisode');
       this.addCart.alert = false;
     }
   },
@@ -149,6 +170,14 @@ export default {
 
     // 該当する商品を格納
     getSelectItems.forEach(el => {
+      // 画像がないものはこっち
+      if (el.fields.item_img == "") {
+        el.fields.item_img = "http://localhost:8001/media/image/sampleImage.jpg";
+      } else {
+        // 画像あり
+        el.fields.item_img = "http://localhost:8001/media/" + el.fields.item_img;
+      }
+
       // 表示する情報を格納
       this.items = {
         item_id: this.$route.params.id,
@@ -165,12 +194,12 @@ export default {
       }
     });
 
-    this.error = this.$store.getters.error;
+    this.error = this.$store.getters.erroInfo;
 
     // エラー表示
     if (this.items.length != 0) {
       // エラー内容表示(ex)Notfound..)
-      this.error = this.$store.getters.error;
+      this.error = this.$store.getters.erroInfo;
     } else {
       // 商品がない時(0個返却された)
       this.error = ' 商品がありません。';
@@ -180,16 +209,14 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.v-image {
-  width: 40%;
-  float: left;
+.float-md-left {
   margin: 5% 5% 0 5%;
 }
+.d-flex {
+  display: flex!important;
+  margin: 6% 0 0 0;
+}
 .v-card {
-  width: 45%;
-  float: right;
-  margin: 8% 5% 0 0;
-
   &__subtitle {
     text-align: left;
   }

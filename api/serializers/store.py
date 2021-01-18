@@ -26,7 +26,7 @@ class StoreSerializer(serializers.ModelSerializer):
     password = validated_data.get('store_password', instance.store_password)
     instance.store_password = make_password(password)
     instance.save()
-    print('パスワード更新しました。')
+    print('新しいパスワード更新しました。')
     return instance
 
 # StoreModelで定義したユーザー作成のメソッドを呼ぶ

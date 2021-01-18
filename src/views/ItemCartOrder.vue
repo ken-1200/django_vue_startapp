@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <!-- logoにしたいな -->
-    <h1>KIMONO</h1>
+    <h1>FURISODE</h1>
     <v-container fluid>
       <v-layout wrap row>
         <v-flex cols=12 md=3 xl=4>
@@ -143,7 +143,7 @@ export default {
   },
   methods: {
     backToPage() {
-      this.$router.push('/order/cart/kinomo');
+      this.$router.push('/order/cart/furisode');
     },
     async purchase() {
       await axios.post('/payments_post/', {
@@ -302,6 +302,8 @@ h1 {
   }
 }
 .v-btn {
+  color: white !important;
+
   &__content {
     align-items: center;
     color: inherit;
@@ -310,7 +312,6 @@ h1 {
     justify-content: inherit;
     line-height: normal;
     position: relative;
-    color: white;
   }
 }
 .btn {

@@ -172,7 +172,7 @@ export default {
     getSelectItems.forEach(el => {
       // 画像がないものはこっち
       if (el.fields.item_img == "") {
-        el.fields.item_img = "http://localhost:8001/media/image/sample_image.jpg";
+        el.fields.item_img = "http://localhost:8001/media/image/sampleImage.jpg";
       } else {
         // 画像あり
         el.fields.item_img = "http://localhost:8001/media/" + el.fields.item_img;
@@ -194,12 +194,12 @@ export default {
       }
     });
 
-    this.error = this.$store.getters.error;
+    this.error = this.$store.getters.erroInfo;
 
     // エラー表示
     if (this.items.length != 0) {
       // エラー内容表示(ex)Notfound..)
-      this.error = this.$store.getters.error;
+      this.error = this.$store.getters.erroInfo;
     } else {
       // 商品がない時(0個返却された)
       this.error = ' 商品がありません。';

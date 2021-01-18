@@ -1,90 +1,102 @@
 <template>
   <div id="app">
-    <!-- 商品投稿 -->
-    <v-card-title id="titleInfo__title">商品を登録する</v-card-title>
-    <v-card-subtitle id="titleInfo__subtitle">あなただけの商品を登録しましょう</v-card-subtitle>
+    <v-container style="height: 800px">
+      <!-- 商品投稿 -->
+      <v-card-title id="titleInfo__title">商品を登録する</v-card-title>
+      <v-card-subtitle id="titleInfo__subtitle">あなただけの商品を登録しましょう</v-card-subtitle>
 
-    <!-- エラー -->
-    <template v-if="isErrored">{{ error }}</template>
-
-    <!-- フォーム -->
-    <v-form
-      ref="form"
-      v-model="valid"
-      lazy-validation
-    >
-      <v-text-field
-        v-model="createItems.name"
-        :counter="30"
-        :rules="nameRules"
-        label="商品名"
-        prepend-icon="mdi-shopping"
-        required
-      ></v-text-field>
-
-      <v-file-input
-        @change="onImageUploaded"
-        label="写真"
-        filled
-        placeholder="クリックしてください。"
-        prepend-icon="mdi-camera"
-        background-color="#fbfbfb"
-      ></v-file-input>
-
-      <v-textarea
-        v-model="createItems.detail"
-        :rules="detailRules"
-        :placeholder="detailPlaceholder"
-        hint="詳細は500文字以下である必要があります。"
-        counter
-        label="詳細"
-        prepend-icon="mdi-form-textarea"
-      ></v-textarea>
-
-      <v-text-field
-        v-model.number="createItems.price"
-        :rules="priceRules"
-        name="input-10-1"
-        label="値段"
-        type="number"
-        max="10000000"
-        min="100"
-        prepend-icon="mdi-currency-jpy"
-        counter
-        required
-      ></v-text-field>
-
-      <v-text-field
-        v-model.number="createItems.total"
-        :rules="totalRules"
-        name="input-10-1"
-        label="品数"
-        type="number"
-        prepend-icon="mdi-paper-cut-vertical"
-        max="100"
-        min="1"
-        counter
-        required
-      ></v-text-field>
-
-      <v-btn
-        :disabled="!valid"
-        :loading="loading"
-        color="success"
-        class="mr-4"
-        @click="validate"
+      <!-- アラート -->
+      <v-alert
+        prominent
+        type="error"
+        :value="alert"
       >
-        登録する
-      </v-btn>
+        <v-row align="center">
+          <v-col class="grow">
+            商品が登録できませんでした。もう一度やり直してください。
+          </v-col>
+        </v-row>
+      </v-alert>
 
-      <v-btn
-        color="error"
-        class="mr-4"
-        @click="reset"
+      <!-- フォーム -->
+      <v-form
+        ref="form"
+        v-model="valid"
+        lazy-validation
       >
-        編集する
-      </v-btn>
-    </v-form>
+        <v-text-field
+          v-model="createItems.name"
+          :counter="30"
+          :rules="nameRules"
+          label="商品名"
+          prepend-icon="mdi-shopping"
+          required
+        ></v-text-field>
+
+        <v-file-input
+          @change="onImageUploaded"
+          label="写真"
+          filled
+          placeholder="クリックしてください。"
+          prepend-icon="mdi-camera"
+          background-color="#fbfbfb"
+        ></v-file-input>
+
+        <v-textarea
+          v-model="createItems.detail"
+          :rules="detailRules"
+          :placeholder="detailPlaceholder"
+          hint="詳細は500文字以下である必要があります。"
+          counter
+          label="詳細"
+          prepend-icon="mdi-form-textarea"
+        ></v-textarea>
+
+        <v-text-field
+          v-model.number="createItems.price"
+          :rules="priceRules"
+          name="input-10-1"
+          label="値段"
+          type="number"
+          max="10000000"
+          min="100"
+          prepend-icon="mdi-currency-jpy"
+          counter
+          required
+        ></v-text-field>
+
+        <v-text-field
+          v-model.number="createItems.total"
+          :rules="totalRules"
+          name="input-10-1"
+          label="品数"
+          type="number"
+          prepend-icon="mdi-paper-cut-vertical"
+          max="100"
+          min="1"
+          counter
+          required
+        ></v-text-field>
+
+        <v-btn
+          :disabled="!valid"
+          :loading="loading"
+          color="success"
+          class="mr-4"
+          @click="validate"
+        >
+          登録する
+        </v-btn>
+
+        <v-btn
+          color="error"
+          class="mr-4"
+          @click="reset"
+        >
+          編集する
+        </v-btn>
+      </v-form>
+    </v-container>
   </div>
 </template>
 
@@ -99,9 +111,9 @@ export default {
         detail: "",
         price: null,
         total: null,
-        image: null,
+        image: "",
       },
-      error: null,
+      alert: false,
       detailPlaceholder: "ちょうど良いウエイトの裏起毛生地、クラシックシルエットのフーディに、都会的なグラフィックがシルクスクリーンで施されたアイテム。厳選された生地色とプリントカラーはデザイン性に優れ、一年を通し、トレーニングウェアから、街着まで、様々なシーンで重宝する。",
       valid: true,
       loading: false,
@@ -129,9 +141,6 @@ export default {
     accessToken() {
       return this.$store.getters.access_token;
     },
-    isErrored() {
-      return this.error != null;
-    },
   },
   methods: {
     onImageUploaded(event) {
@@ -155,6 +164,7 @@ export default {
     },
     // 商品作成
     async postItems() {
+      console.log(this.createItems)
       await axios.post('/item_list/', {
         item_name: this.createItems.name,
         item_detail: this.createItems.detail,
@@ -174,8 +184,22 @@ export default {
         this.init();
       })
       .catch(error => {
-        console.log(error);
-        this.error = error;
+        // ステータス400以外返却時
+        if (!(error.response.status == 400)) {
+          window.alert(error.message);
+        }
+
+        // アラート判定
+        if (error) {
+          this.alert = true;
+
+          // 5s後にリセット
+          setTimeout(() => {
+            this.reset();
+          }, 3600);
+        } else {
+          this.alert = false;
+        }
       })
     },
     // ボタン
@@ -190,6 +214,9 @@ export default {
     reset() {
       // リセット、エラー文字を削除
       this.$refs.form.reset();
+
+      // アラートリセット
+      this.alert = false;
     },
     // 初期化
     init() {
@@ -198,7 +225,7 @@ export default {
         detail: "",
         price: null,
         total: null,
-        image: null,
+        image: "",
       }
     },
   },

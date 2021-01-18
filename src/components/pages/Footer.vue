@@ -11,10 +11,11 @@
       >
         <v-card-text>
           <v-btn
-            v-for="icon in icons"
-            :key="icon"
+            v-for="(icon, i) in icons"
+            :key="i"
             class="VueBlack--text mx-4"
             icon
+            @click.stop="clickIcon(i)"
           >
             <v-icon size="24px">
               {{ icon }}
@@ -42,12 +43,32 @@ export default {
   data() {
     return {
       icons: [
+        'mdi-home',
         'mdi-facebook',
         'mdi-twitter',
-        'mdi-linkedin',
         'mdi-instagram',
       ],
     }
+  },
+  methods: {
+    clickIcon(index) {
+      switch (index) {
+        case 0:
+          this.$router.push('/item_list');
+          break;
+        case 1:
+          window.open("https://www.facebook.com/profile.php?id=100049334573408", '_blank', 'width=1024,height=768,scrollbars=yes,resizable=yes');
+          break;
+        case 2:
+          window.open("https://twitter.com", '_blank', 'width=1024,height=768,scrollbars=yes,resizable=yes');
+          break;
+        case 3:
+          window.open("https://www.instagram.com/macd_a1200/?hl=ja", '_blank', 'width=1024,height=768,scrollbars=yes,resizable=yes');
+          break;
+        default:
+          this.$router.push('/');
+      }
+    },
   }
 }
 </script>

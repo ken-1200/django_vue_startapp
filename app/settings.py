@@ -11,9 +11,9 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = '4l3g)^t=9sk6lcp(n(_13q22&+k_+1o(sl2lk9ljs(!1-j5_cx'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
-ALLOWED_HOSTS = []
+DEBUG = False
+# パブリックIPv4アドレス(EIP)/ パブリックIPv4DNS
+ALLOWED_HOSTS = ['54.178.201.192', 'ec2-54-178-201-192.ap-northeast-1.compute.amazonaws.com', ]
 
 
 # Application definition

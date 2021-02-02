@@ -4,7 +4,7 @@ from django.conf.urls import include
 
 # image
 from django.conf.urls.static import static
-from django.conf import settings
+from app.settings import base
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -12,4 +12,4 @@ urlpatterns = [
 ]
 
 # url設定--url⇨root⇨image
-urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+urlpatterns += static(base.MEDIA_URL, document_root=base.MEDIA_ROOT)

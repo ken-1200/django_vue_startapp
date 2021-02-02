@@ -1,4 +1,5 @@
 import os
+from app.settings import base
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -11,9 +12,9 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = '4l3g)^t=9sk6lcp(n(_13q22&+k_+1o(sl2lk9ljs(!1-j5_cx'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
-# パブリックIPv4アドレス(EIP)/ パブリックIPv4DNS
-ALLOWED_HOSTS = ['127.0.0.1', '54.178.201.192', 'ec2-54-178-201-192.ap-northeast-1.compute.amazonaws.com', ]
+DEBUG = True
+
+ALLOWED_HOSTS = []
 
 
 # Application definition

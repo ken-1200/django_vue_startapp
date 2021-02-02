@@ -17,8 +17,5 @@ DATABASES = {
         'PASSWORD': 'dbpassword',
         'HOST': 'prd-rds.colsjxq8adqw.ap-northeast-1.rds.amazonaws.com',
         'PORT': 3306,
-        'OPTIONS': {
-            'charset': 'utf8mb4',
-        }
     }
 }

@@ -4,7 +4,7 @@ from .base import *
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 # パブリックIPv4アドレス(EIP)/ パブリックIPv4DNS
-ALLOWED_HOSTS = ['127.0.0.1', '3.113.239.69', 'ec2-3-113-239-69.ap-northeast-1.compute.amazonaws.com', ]
+ALLOWED_HOSTS = ['54.95.222.39', 'ec2-54-95-222-39.ap-northeast-1.compute.amazonaws.com']
 
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases

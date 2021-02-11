@@ -4,7 +4,7 @@ from .base import *
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 # パブリックIPv4アドレス(EIP)/ パブリックIPv4DNS
-ALLOWED_HOSTS = ['54.95.222.39', 'ec2-54-95-222-39.ap-northeast-1.compute.amazonaws.com', 'django-vue-startapp-dev.ap-northeast-1.elasticbeanstalk.com']
+ALLOWED_HOSTS = []
 
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
@@ -15,7 +15,7 @@ DATABASES = {
         'NAME': 'db',
         'USER': 'dbuser',
         'PASSWORD': 'dbpassword',
-        'HOST': 'prd-rds.colsjxq8adqw.ap-northeast-1.rds.amazonaws.com',
+        'HOST': '',
         'PORT': 3306,
         'OPTIONS': {
             'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",

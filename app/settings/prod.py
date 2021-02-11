@@ -4,7 +4,7 @@ from .base import *
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 # パブリックIPv4アドレス(EIP)/ パブリックIPv4DNS
-ALLOWED_HOSTS = ['54.95.222.39', 'ec2-54-95-222-39.ap-northeast-1.compute.amazonaws.com']
+ALLOWED_HOSTS = ['54.95.222.39', 'ec2-54-95-222-39.ap-northeast-1.compute.amazonaws.com', 'django-vue-startapp-dev.ap-northeast-1.elasticbeanstalk.com']
 
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases

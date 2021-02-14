@@ -6,6 +6,11 @@ DEBUG = False
 # パブリックIPv4アドレス(EIP)/ パブリックIPv4DNS/ CNAME プロパティの値
 ALLOWED_HOSTS = ['13.230.53.216', 'ec2-13-230-53-216.ap-northeast-1.compute.amazonaws.com', 'App-Django-Vue-dev.ap-northeast-1.elasticbeanstalk.com']
 
+# S3共通の設定(本番)
+if 'AWS_ACCESS_KEY_ID' in os.environ:
+    AWS_ACCESS_KEY_ID = os.environ['AWS_ACCESS_KEY_ID']
+    AWS_SECRET_ACCESS_KEY = os.environ['AWS_SECRET_ACCESS_KEY']
+
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 

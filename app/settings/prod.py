@@ -11,6 +11,8 @@ if 'AWS_ACCESS_KEY_ID' in os.environ:
     AWS_ACCESS_KEY_ID = os.environ['AWS_ACCESS_KEY_ID']
     AWS_SECRET_ACCESS_KEY = os.environ['AWS_SECRET_ACCESS_KEY']
 
+AWS_QUERYSTRING_AUTH = False
+
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 

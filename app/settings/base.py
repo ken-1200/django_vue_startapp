@@ -1,5 +1,17 @@
 import os
+import environ
 from .local_settings import *
+
+# settings.pyの位置を起点として３つ上の親ディレクトリを参照
+BASE_DIR = environ.Path(__file__) - 3
+
+env = environ.Env()
+
+# 環境変数でDJANGO_READ_ENV_FILEをTrueにしておくと.envを読んでくれる
+READ_ENV_FILE = env.bool('DJANGO_READ_ENV_FILE', default=True)
+if READ_ENV_FILE:
+    env_file = str(BASE_DIR.path('.env'))
+    env.read_env(env_file)
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -91,25 +103,33 @@ USE_L10N = True
 
 USE_TZ = True
 
+# S3共通の設定
+AWS_ACCESS_KEY_ID = env('AWS_ACCESS_KEY_ID')
+AWS_SECRET_ACCESS_KEY = env('AWS_SECRET_ACCESS_KEY')
+AWS_STORAGE_BUCKET_NAME = env('AWS_STORAGE_BUCKET_NAME')
+AWS_S3_CUSTOM_DOMAIN = '%s.s3.amazonaws.com' % AWS_STORAGE_BUCKET_NAME
+# 1日はそのキャッシュを使う
+AWS_S3_OBJECT_PARAMETERS = {
+    'CacheControl': 'max-age=86400',
+}
+
+# 静的ファイルの設定
+AWS_LOCATION = 'static'
+STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+STATIC_URL = "https://%s/%s/" % (AWS_S3_CUSTOM_DOMAIN, AWS_LOCATION)
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
-
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 # mediaフォルダの場所
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-
 # url指定
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 
-# Django storages - use this for production
-STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
-
-# Django storages - use in production
-DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
-
+# メディアファイルの設定
+DEFAULT_FILE_STORAGE = 'app.settings.backends.MediaStorage'
 
 #Django Rest frameworkの設定
 REST_FRAMEWORK = {
@@ -130,7 +150,7 @@ CORS_ORIGIN_WHITELIST = (
     'http://localhost:8081',
     'http://127.0.0.1:8001',
     'http://127.0.0.1:8000',
-    'http://app-django-vue-dev.ap-northeast-1.elasticbeanstalk.com/',
+    'http://app-django-vue-dev.ap-northeast-1.elasticbeanstalk.com',
 )
 
 CORS_ALLOW_HEADERS = [
@@ -147,7 +167,3 @@ CORS_ALLOW_HEADERS = [
 
 # Application definition
 AUTH_USER_MODEL = 'user.User'
-
-# s3-accesskey
-AWS_ACCESS_KEY_ID = os.environ['AWS_ACCESS_KEY_ID']
-AWS_SECRET_ACCESS_KEY = os.environ['AWS_SECRET_ACCESS_KEY']

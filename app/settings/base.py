@@ -23,6 +23,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'rest_framework.authtoken',
     'customtoken.apps.CustomtokenConfig',
+    'storages',
 ]
 
 MIDDLEWARE = [
@@ -95,12 +96,19 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 # mediaフォルダの場所
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # url指定
 MEDIA_URL = '/media/'
+
+# Django storages - use this for production
+STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+
+# Django storages - use in production
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 
 
 #Django Rest frameworkの設定
@@ -122,6 +130,7 @@ CORS_ORIGIN_WHITELIST = (
     'http://localhost:8081',
     'http://127.0.0.1:8001',
     'http://127.0.0.1:8000',
+    'http://app-django-vue-dev.ap-northeast-1.elasticbeanstalk.com/',
 )
 
 CORS_ALLOW_HEADERS = [

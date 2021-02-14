@@ -1,17 +1,5 @@
 import os
-import environ
 from .local_settings import *
-
-# settings.pyの位置を起点として３つ上の親ディレクトリを参照
-BASE_DIR = environ.Path(__file__) - 3
-
-env = environ.Env()
-
-# 環境変数でDJANGO_READ_ENV_FILEをTrueにしておくと.envを読んでくれる
-READ_ENV_FILE = env.bool('DJANGO_READ_ENV_FILE', default=True)
-if READ_ENV_FILE:
-    env_file = str(BASE_DIR.path('.env'))
-    env.read_env(env_file)
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -104,9 +92,7 @@ USE_L10N = True
 USE_TZ = True
 
 # S3共通の設定
-AWS_ACCESS_KEY_ID = env('AWS_ACCESS_KEY_ID')
-AWS_SECRET_ACCESS_KEY = env('AWS_SECRET_ACCESS_KEY')
-AWS_STORAGE_BUCKET_NAME = env('AWS_STORAGE_BUCKET_NAME')
+AWS_STORAGE_BUCKET_NAME = 'django-static-file'
 AWS_S3_CUSTOM_DOMAIN = '%s.s3.amazonaws.com' % AWS_STORAGE_BUCKET_NAME
 # 1日はそのキャッシュを使う
 AWS_S3_OBJECT_PARAMETERS = {

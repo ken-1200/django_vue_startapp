@@ -147,3 +147,7 @@ CORS_ALLOW_HEADERS = [
 
 # Application definition
 AUTH_USER_MODEL = 'user.User'
+
+# s3-accesskey
+AWS_ACCESS_KEY_ID = os.environ['AWS_ACCESS_KEY_ID']
+AWS_SECRET_ACCESS_KEY = os.environ['AWS_SECRET_ACCESS_KEY']

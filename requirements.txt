@@ -10,6 +10,7 @@ django-cors-headers==3.5.0
 django-environ==0.4.5
 django-extra-fields==3.0.2
 django-storages==1.11.1
+-e git+https://github.com/jschneier/django-storages.git@770332b598712da27ecdba75c9e202ad6a1a8722#egg=django_storages
 djangorestframework==3.11.1
 drf-extra-fields==3.0.4
 drf-yasg==1.20.0

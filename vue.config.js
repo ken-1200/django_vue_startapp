@@ -6,19 +6,19 @@ module.exports = {
       }
     }
   },
-  outputDir: 'templates/vue',
-  publicPath: '/',
+  outputDir: 'dist',
+  publicPath: './',
   indexPath: 'index.html',
-  assetsDir: 'static',
+  assetsDir: '',
   devServer: {
     progress: false,
     host: '0.0.0.0',
     proxy: {
       '^/api': {
-        target: 'http://web:8000',
+        target: 'http://13.230.53.216:8081',
         changeOrigin: true,
         onProxyReq: function (proxyReq) {
-          proxyReq.setHeader('host', 'localhost:8000');
+          proxyReq.setHeader('host', 'localhost:8081');
         },
       },
     },

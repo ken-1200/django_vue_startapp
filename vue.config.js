@@ -7,7 +7,7 @@ module.exports = {
     }
   },
   publicPath: "./",
-  "devServer" : {
-      public : 'http://13.230.53.216:8081',
-  }
+  "devServer": {
+    public: 'http://13.230.53.216:8081',
+  },
 };

@@ -8,6 +8,6 @@ module.exports = {
   },
   publicPath: "./",
   "devServer": {
-    public: '13.230.53.216:8080',
+    public: '52.194.192.92:8080',
   },
 };

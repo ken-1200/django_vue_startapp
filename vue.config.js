@@ -6,8 +6,4 @@ module.exports = {
       }
     }
   },
-  publicPath: "./",
-  "devServer": {
-    public: '52.194.192.92:8080',
-  },
 };

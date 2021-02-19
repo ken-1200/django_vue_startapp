@@ -4,7 +4,7 @@ from .base import *
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 # パブリックIPv4アドレス(EIP)/ パブリックIPv4DNS/ CNAME プロパティの値
-ALLOWED_HOSTS = ['13.230.53.216', 'ec2-13-230-53-216.ap-northeast-1.compute.amazonaws.com', 'App-Django-Vue-dev.ap-northeast-1.elasticbeanstalk.com']
+ALLOWED_HOSTS = ['App-Django-Vue-dev.ap-northeast-1.elasticbeanstalk.com']
 
 # S3共通の設定(本番)
 if 'AWS_ACCESS_KEY_ID' in os.environ:

@@ -4,7 +4,7 @@ from .base import *
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 # パブリックIPv4アドレス(EIP)/ パブリックIPv4DNS/ CNAME プロパティの値
-ALLOWED_HOSTS = ['App-Django-Vue-dev.ap-northeast-1.elasticbeanstalk.com']
+ALLOWED_HOSTS = ['Appmulticontainerdjangovue-env.eba-ycni5mmu.ap-northeast-1.elasticbeanstalk.com']
 
 # S3共通の設定(本番)
 if 'AWS_ACCESS_KEY_ID' in os.environ:
@@ -22,7 +22,7 @@ DATABASES = {
         'NAME': 'ebdb',
         'USER': 'dbuser',
         'PASSWORD': 'dbpassword',
-        'HOST': 'aa1pjt00ez303v6.colsjxq8adqw.ap-northeast-1.rds.amazonaws.com',
+        'HOST': 'aa6gfqvq5qbj2w.colsjxq8adqw.ap-northeast-1.rds.amazonaws.com',
         'PORT': '3306',
         'OPTIONS': {
             'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",

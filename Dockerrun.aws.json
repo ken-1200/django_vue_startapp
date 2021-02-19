@@ -1,0 +1,75 @@
+{
+  "AWSEBDockerrunVersion": 2,
+  "volumes": [
+    {
+      "name": "backend_src",
+      "host": {
+        "sourcePath": "/var/app/current/backend"
+      }
+    }
+  ],
+  "containerDefinitions": [
+    {
+      "name": "api",
+      "image": "django/django-image:latest",
+      "hostname": "api",
+      "memory": 450,
+      "portMappings": [
+        {
+          "hostPort": 8080,
+          "containerPort": 8080
+        }
+      ],
+      "mountPoints": [
+        {
+          "sourceVolume": "backend_src",
+          "containerPath": "/backend"
+        }
+      ],
+      "environment": [
+        {
+          "name": "DJANGO_ENV",
+          "value": "production"
+        }
+      ]
+    },
+    {
+      "name": "frontend",
+      "image": "vue/vue-image:latest",
+      "hostname": "frontend",
+      "memory": 450,
+      "portMappings": [
+        {
+          "hostPort": 80,
+          "containerPort": 3000
+        }
+      ],
+      "links": [
+        "api"
+      ],
+      "environment": [
+        {
+          "name": "NODE_ENV",
+          "value": "production"
+        },
+        {
+          "name": "API_URL",
+          "value": "http://api:8080/"
+        },
+        {
+          "name": "API_URL_BROWSER",
+          "value": "https://example.com:8080/"
+        },
+        {
+          "name": "WS_URL",
+          "value": "wss://example.com:8080/cable"
+        }
+      ],
+      "command": [
+        "npm",
+        "run",
+        "start"
+      ]
+    }
+  ]
+}

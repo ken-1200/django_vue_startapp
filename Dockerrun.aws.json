@@ -4,14 +4,14 @@
     {
       "name": "backend_src",
       "host": {
-        "sourcePath": "/var/app/current/app"
+        "sourcePath": "/var/app/current/"
       }
     }
   ],
   "containerDefinitions": [
     {
       "name": "api",
-      "image": "django/django-image:latest",
+      "image": "python:3.7",
       "hostname": "api",
       "memory": 450,
       "portMappings": [

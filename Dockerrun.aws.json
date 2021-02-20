@@ -4,7 +4,7 @@
     {
       "name": "backend_src",
       "host": {
-        "sourcePath": "/var/app/current/backend"
+        "sourcePath": "/var/app/current/app"
       }
     }
   ],
@@ -23,7 +23,7 @@
       "mountPoints": [
         {
           "sourceVolume": "backend_src",
-          "containerPath": "/backend"
+          "containerPath": "/app"
         }
       ],
       "environment": [
